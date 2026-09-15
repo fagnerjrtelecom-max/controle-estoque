@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Almoxarifado Elétrica — Desktop App</title>
 
-<!-- Fonte Inter e Ícones Lucide -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -61,66 +60,193 @@ body {
   transition: background-color 0.3s;
 }
 
-/* Tela de Login */
+/* =========================================================
+   TELA DE LOGIN ESTILO SPLIT
+   ========================================================= */
 .login-screen {
   position: fixed;
   top: 0; left: 0; width: 100vw; height: 100vh;
-  background: linear-gradient(135deg, var(--azul-escuro), #00056b);
+  background: #060b26;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 2000;
+  padding: 20px;
 }
 
-.login-card {
+.login-container {
   background: white;
   width: 100%;
-  max-width: 400px;
-  padding: 36px;
-  border-radius: var(--radius-lg);
-  box-shadow: 0 25px 50px rgba(0,0,0,0.3);
-  text-align: center;
+  max-width: 960px;
+  min-height: 540px;
+  border-radius: 20px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+  display: flex;
+  overflow: hidden;
+  border: 1px solid var(--border);
 }
 
-.login-card h2 {
-  margin: 12px 0 6px 0;
-  font-size: 22px;
-  color: var(--azul-escuro);
+/* Side Esquerdo (Banner / GIF) */
+.login-banner {
+  flex: 1.1;
+  background: linear-gradient(135deg, #020720, var(--azul-escuro));
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 40px;
+  position: relative;
+  overflow: hidden;
+  color: white;
+}
+
+.login-banner::after {
+  content: '';
+  position: absolute;
+  top: -50px; left: -50px;
+  width: 180px; height: 180px;
+  background: rgba(0, 185, 255, 0.15);
+  border-radius: 50%;
+  filter: blur(40px);
+}
+
+.banner-brand {
+  font-size: 14px;
   font-weight: 800;
+  letter-spacing: 1px;
+  color: var(--azul-claro);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-transform: uppercase;
+  z-index: 2;
 }
 
-.login-card p {
-  margin: 0 0 24px 0;
-  font-size: 13px;
-  color: var(--text-muted);
-}
-
-.login-icon {
-  width: 64px;
-  height: 64px;
-  background: rgba(0, 185, 255, 0.1);
-  color: var(--azul-escuro);
-  border-radius: 16px;
-  display: inline-flex;
+.banner-gif-container {
+  flex: 1;
+  display: flex;
   align-items: center;
   justify-content: center;
+  padding: 10px 0;
+  z-index: 2;
+}
+
+.banner-gif {
+  max-width: 85%;
+  max-height: 250px;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 20px rgba(0, 185, 255, 0.25));
+}
+
+.banner-footer {
+  z-index: 2;
+}
+
+.banner-footer h3 {
+  margin: 0 0 6px 0;
+  font-size: 22px;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.banner-footer p {
+  margin: 0;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.4;
+}
+
+/* Side Direito (Formulário) */
+.login-box {
+  flex: 1;
+  padding: 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: #ffffff;
+}
+
+.login-box-header {
+  margin-bottom: 28px;
+}
+
+.login-box-header h2 {
+  margin: 0 0 6px 0;
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--azul-escuro);
+}
+
+.login-box-header p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-muted);
 }
 
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  text-align: left;
+  gap: 18px;
+}
+
+.login-form .field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .login-form label {
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--azul-escuro);
   text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-/* Header */
+.login-form input {
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.login-form input:focus {
+  border-color: var(--azul-claro);
+  box-shadow: 0 0 0 3px rgba(0, 185, 255, 0.15);
+}
+
+.btn-login {
+  background: var(--azul-escuro);
+  color: white;
+  border: 0;
+  padding: 13px;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+  transition: all 0.2s;
+}
+
+.btn-login:hover {
+  background: var(--azul-claro);
+  box-shadow: 0 6px 18px rgba(0, 185, 255, 0.3);
+}
+
+@media (max-width: 768px) {
+  .login-container { flex-direction: column; }
+  .login-banner { padding: 24px; min-height: 200px; }
+  .login-box { padding: 28px; }
+  .banner-gif { max-height: 140px; }
+}
+
+/* =========================================================
+   ESTRUTURA DO SISTEMA (HEADER E CONTAINER)
+   ========================================================= */
 header {
   background: var(--theme-color);
   color: white;
@@ -374,7 +500,7 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
 
 .toast {
   position: fixed; right: 24px; bottom: 24px; background: #0f172a; color: white;
-  padding: 14px 22px; border-radius: var(--radius-md); display: none; z-index: 99;
+  padding: 14px 22px; border-radius: var(--radius-md); display: none; z-index: 9999;
   font-size: 14px; font-weight: 600; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
   border-left: 4px solid var(--theme-color);
 }
@@ -382,24 +508,39 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
 </head>
 <body class="theme-hub">
 
-<!-- JANELA DE LOGIN -->
 <div class="login-screen" id="loginScreen">
-  <div class="login-card">
-    <div class="login-icon"><i data-lucide="shield-check" size="36"></i></div>
-    <h2>Acesso ao Sistema</h2>
-    <p>Almoxarifado Interno da Elétrica</p>
-    <div class="login-form">
-      <div>
-        <label>Usuário</label>
-        <input type="text" id="loginUser" placeholder="Digite seu usuário" onkeydown="checkEnter(event)">
+  <div class="login-container">
+    <div class="login-banner">
+      <div class="banner-brand">
+        <i data-lucide="zap" size="20"></i> ELETROSTOCK PRO
       </div>
-      <div>
-        <label>Senha</label>
-        <input type="password" id="loginPass" placeholder="Digite sua senha" onkeydown="checkEnter(event)">
+      <div class="banner-gif-container">
+        <img src="https://lh3.googleusercontent.com/d/1qJQXDfDcs_rF16nQZX1NSOKLEtQ3aUL7" alt="Animação de Acesso Seguro" class="banner-gif">
       </div>
-      <button class="btn primary" style="width:100%; margin-top:8px;" onclick="handleLogin()">
-        <i data-lucide="log-in"></i> Entrar no Sistema
-      </button>
+      <div class="banner-footer">
+        <h3>Acesso Seguro</h3>
+        <p>Controle inteligente de estoque e ferramentas do setor elétrico.</p>
+      </div>
+    </div>
+
+    <div class="login-box">
+      <div class="login-box-header">
+        <h2>Bem-vindo!</h2>
+        <p>Digite seus dados para acessar o sistema.</p>
+      </div>
+      <div class="login-form">
+        <div class="field">
+          <label>Usuário</label>
+          <input type="text" id="loginUser" placeholder="Digite seu usuário" onkeydown="checkEnter(event)">
+        </div>
+        <div class="field">
+          <label>Senha</label>
+          <input type="password" id="loginPass" placeholder="Digite sua senha" onkeydown="checkEnter(event)">
+        </div>
+        <button class="btn-login" onclick="handleLogin()">
+          <i data-lucide="log-in" size="18"></i> Entrar no Sistema
+        </button>
+      </div>
     </div>
   </div>
 </div>
@@ -419,7 +560,6 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
 
 <div class="app-container">
 
-  <!-- HUB INICIAL -->
   <div id="hubSection">
     <div class="hub-header">
       <h2>Painel Principal de Gestão</h2>
@@ -465,7 +605,6 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
     </div>
   </div>
 
-  <!-- MÓDULOS INTERNOS -->
   <div id="moduleSection" style="display:none">
     <div class="module-bar">
       <button class="btn-back" onclick="openHub()"><i data-lucide="arrow-left"></i> Voltar ao Painel Principal</button>
@@ -474,7 +613,6 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
 
     <nav class="desktop-tabs" id="moduleNav"></nav>
 
-    <!-- ABA Estoque -->
     <div id="modDashboard" class="section active">
       <div class="panel">
         <h3 id="dashTitleText"><i data-lucide="layers"></i> Itens Disponíveis</h3>
@@ -490,7 +628,6 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
       </div>
     </div>
 
-    <!-- ABA Empréstimos -->
     <div id="modLoans" class="section">
       <div class="panel">
         <h3><i data-lucide="handshake"></i> Registrar Empréstimo de Ferramenta</h3>
@@ -541,7 +678,6 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
       </div>
     </div>
 
-    <!-- ABA Saída Definitiva -->
     <div id="modExit" class="section">
       <div class="panel">
         <h3><i data-lucide="arrow-up-circle"></i> Registrar Saída Definitiva (Uso / Consumo)</h3>
@@ -573,7 +709,6 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
       </div>
     </div>
 
-    <!-- ABA Entrada -->
     <div id="modEntry" class="section">
       <div class="panel">
         <h3><i data-lucide="arrow-down-circle"></i> Receber Item (Veio do Almoxarifado Central)</h3>
@@ -601,7 +736,6 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
       </div>
     </div>
 
-    <!-- ABA Cadastro -->
     <div id="modCad" class="section">
       <div class="panel">
         <h3 id="cadFormTitle"><i data-lucide="plus-square"></i> Cadastrar Item</h3>
@@ -622,7 +756,6 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
       </div>
     </div>
 
-    <!-- ABA Histórico -->
     <div id="modHistory" class="section">
       <div class="panel">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px">
@@ -651,7 +784,6 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
   </div>
 </div>
 
-<!-- JANELA MODAL DE EDIÇÃO -->
 <div class="modal-overlay" id="editModal">
   <div class="modal-card">
     <div class="modal-header">
@@ -680,7 +812,6 @@ let activeLoans = JSON.parse(localStorage.getItem(KEY_L) || '[]');
 
 let currentModule = null;
 
-// Lógica de Autenticação
 function checkAuth() {
   const isAuth = localStorage.getItem(KEY_AUTH);
   if (isAuth === 'true') {
