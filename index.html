@@ -61,6 +61,66 @@ body {
   transition: background-color 0.3s;
 }
 
+/* Tela de Login */
+.login-screen {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: linear-gradient(135deg, var(--azul-escuro), #00056b);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.login-card {
+  background: white;
+  width: 100%;
+  max-width: 400px;
+  padding: 36px;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+  text-align: center;
+}
+
+.login-card h2 {
+  margin: 12px 0 6px 0;
+  font-size: 22px;
+  color: var(--azul-escuro);
+  font-weight: 800;
+}
+
+.login-card p {
+  margin: 0 0 24px 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.login-icon {
+  width: 64px;
+  height: 64px;
+  background: rgba(0, 185, 255, 0.1);
+  color: var(--azul-escuro);
+  border-radius: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  text-align: left;
+}
+
+.login-form label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--azul-escuro);
+  text-transform: uppercase;
+}
+
+/* Header */
 header {
   background: var(--theme-color);
   color: white;
@@ -99,7 +159,7 @@ header {
   font-weight: 700;
 }
 
-.header-actions { display: flex; gap: 10px; }
+.header-actions { display: flex; gap: 10px; align-items: center; }
 
 .app-container {
   max-width: 1400px;
@@ -253,6 +313,7 @@ textarea { resize: vertical; min-height: 70px; }
   font-size: 13px;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   transition: all 0.2s;
 }
@@ -321,6 +382,28 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
 </head>
 <body class="theme-hub">
 
+<!-- JANELA DE LOGIN -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <div class="login-icon"><i data-lucide="shield-check" size="36"></i></div>
+    <h2>Acesso ao Sistema</h2>
+    <p>Almoxarifado Interno da Elétrica</p>
+    <div class="login-form">
+      <div>
+        <label>Usuário</label>
+        <input type="text" id="loginUser" placeholder="Digite seu usuário" onkeydown="checkEnter(event)">
+      </div>
+      <div>
+        <label>Senha</label>
+        <input type="password" id="loginPass" placeholder="Digite sua senha" onkeydown="checkEnter(event)">
+      </div>
+      <button class="btn primary" style="width:100%; margin-top:8px;" onclick="handleLogin()">
+        <i data-lucide="log-in"></i> Entrar no Sistema
+      </button>
+    </div>
+  </div>
+</div>
+
 <header>
   <div class="window-title" onclick="openHub()">
     <h1><i data-lucide="cpu"></i> ALMOXARIFADO ELÉTRICA</h1>
@@ -330,6 +413,7 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
     <button class="btn secondary small" onclick="exportData()"><i data-lucide="download"></i> Backup JSON</button>
     <button class="btn secondary small" onclick="document.getElementById('importFile').click()"><i data-lucide="upload"></i> Restaurar</button>
     <input type="file" id="importFile" style="display:none" accept=".json" onchange="importData(event)">
+    <button class="btn danger small" onclick="handleLogout()" title="Sair do Sistema"><i data-lucide="log-out"></i> Sair</button>
   </div>
 </header>
 
@@ -406,7 +490,7 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
       </div>
     </div>
 
-    <!-- ABA Empréstimos (Ferramentas) -->
+    <!-- ABA Empréstimos -->
     <div id="modLoans" class="section">
       <div class="panel">
         <h3><i data-lucide="handshake"></i> Registrar Empréstimo de Ferramenta</h3>
@@ -457,7 +541,7 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
       </div>
     </div>
 
-    <!-- ABA Saída Definitiva (Materiais) -->
+    <!-- ABA Saída Definitiva -->
     <div id="modExit" class="section">
       <div class="panel">
         <h3><i data-lucide="arrow-up-circle"></i> Registrar Saída Definitiva (Uso / Consumo)</h3>
@@ -489,7 +573,7 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
       </div>
     </div>
 
-    <!-- ABA Entrada (Materiais) -->
+    <!-- ABA Entrada -->
     <div id="modEntry" class="section">
       <div class="panel">
         <h3><i data-lucide="arrow-down-circle"></i> Receber Item (Veio do Almoxarifado Central)</h3>
@@ -588,12 +672,47 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
 const KEY_M = 'eletrica_itens_v10';
 const KEY_H = 'eletrica_hist_v10';
 const KEY_L = 'eletrica_loans_v10';
+const KEY_AUTH = 'eletrica_auth_v10';
 
 let materials = JSON.parse(localStorage.getItem(KEY_M) || '[]');
 let history = JSON.parse(localStorage.getItem(KEY_H) || '[]');
 let activeLoans = JSON.parse(localStorage.getItem(KEY_L) || '[]');
 
 let currentModule = null;
+
+// Lógica de Autenticação
+function checkAuth() {
+  const isAuth = localStorage.getItem(KEY_AUTH);
+  if (isAuth === 'true') {
+    document.getElementById('loginScreen').style.display = 'none';
+  } else {
+    document.getElementById('loginScreen').style.display = 'flex';
+  }
+}
+
+function handleLogin() {
+  const user = document.getElementById('loginUser').value.trim();
+  const pass = document.getElementById('loginPass').value.trim();
+
+  if (user.toLowerCase() === 'fagner' && pass === 'jr123') {
+    localStorage.setItem(KEY_AUTH, 'true');
+    document.getElementById('loginScreen').style.display = 'none';
+    toast('Bem-vindo, Fagner!');
+  } else {
+    toast('Usuário ou senha incorretos!');
+  }
+}
+
+function handleLogout() {
+  localStorage.removeItem(KEY_AUTH);
+  document.getElementById('loginUser').value = '';
+  document.getElementById('loginPass').value = '';
+  checkAuth();
+}
+
+function checkEnter(e) {
+  if (e.key === 'Enter') handleLogin();
+}
 
 function save() {
   localStorage.setItem(KEY_M, JSON.stringify(materials));
@@ -1070,6 +1189,8 @@ function exportCSV() {
   a.click();
 }
 
+// Inicialização
+checkAuth();
 openHub();
 </script>
 </body>
