@@ -4,8 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Almoxarifado Elétrica — Desktop App</title>
-<link rel="manifest" href="./manifest.json">
+
+<!-- Configurações PWA Embutidas -->
 <meta name="theme-color" content="#000ADC">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIkVsZXRyb1N0b2NrIFBybyIsCiAgInNob3J0X25hbWUiOiAiRWxldHJvU3RvY2siLAogICJkZXNjcmlwdGlvbiI6ICJHZXN0YW8gZGUgQWxtb3hhcmlmYWRvIGUgRmVycmFtZW50YXMgZGEgRWxldHJpY2EiLAogICJzdGFydF91cmwiOiAiLi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiMwNjBiMjYiLAogICJ0aGVtZV9jb2xvciI6ICIjMDAwQURDIiwKICAiaWNvbnMiOiBbCiAgICB7CiAgICAgICJzcmMiOiAiaHR0cHM6Ly9jZG4taWNvbnMtcG5nLmZsYXRpY29uLmNvbS81MTIvMjk4My8yOTgzMDYzLnBuZyIsCiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICJodHRwczovL2Nkbi1pY29ucy1wbmcuZmxhdGljb24uY29tLzUxMi8yOTgzLzI5ODMwNjMucG5nIiwKICAgICAgInNpemVzIjogIjUxMng1MTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9wbmciCiAgICB9CiAgXQp9">
+
+<!-- Fonte Inter e Ícones Lucide -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -61,9 +67,7 @@ body {
   transition: background-color 0.3s;
 }
 
-/* =========================================================
-   TELA DE LOGIN ESTILO SPLIT
-   ========================================================= */
+/* TELA DE LOGIN ESTILO SPLIT */
 .login-screen {
   position: fixed;
   top: 0; left: 0; width: 100vw; height: 100vh;
@@ -87,7 +91,6 @@ body {
   border: 1px solid var(--border);
 }
 
-/* Side Esquerdo (Banner / GIF) */
 .login-banner {
   flex: 1.1;
   background: linear-gradient(135deg, #020720, var(--azul-escuro));
@@ -98,16 +101,6 @@ body {
   position: relative;
   overflow: hidden;
   color: white;
-}
-
-.login-banner::after {
-  content: '';
-  position: absolute;
-  top: -50px; left: -50px;
-  width: 180px; height: 180px;
-  background: rgba(0, 185, 255, 0.15);
-  border-radius: 50%;
-  filter: blur(40px);
 }
 
 .banner-brand {
@@ -138,25 +131,10 @@ body {
   filter: drop-shadow(0 10px 20px rgba(0, 185, 255, 0.25));
 }
 
-.banner-footer {
-  z-index: 2;
-}
+.banner-footer { z-index: 2; }
+.banner-footer h3 { margin: 0 0 6px 0; font-size: 22px; font-weight: 800; color: #ffffff; }
+.banner-footer p { margin: 0; font-size: 13px; color: rgba(255, 255, 255, 0.7); line-height: 1.4; }
 
-.banner-footer h3 {
-  margin: 0 0 6px 0;
-  font-size: 22px;
-  font-weight: 800;
-  color: #ffffff;
-}
-
-.banner-footer p {
-  margin: 0;
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.7);
-  line-height: 1.4;
-}
-
-/* Side Direito (Formulário) */
 .login-box {
   flex: 1;
   padding: 48px;
@@ -166,42 +144,13 @@ body {
   background: #ffffff;
 }
 
-.login-box-header {
-  margin-bottom: 28px;
-}
+.login-box-header { margin-bottom: 28px; }
+.login-box-header h2 { margin: 0 0 6px 0; font-size: 26px; font-weight: 800; color: var(--azul-escuro); }
+.login-box-header p { margin: 0; font-size: 14px; color: var(--text-muted); }
 
-.login-box-header h2 {
-  margin: 0 0 6px 0;
-  font-size: 26px;
-  font-weight: 800;
-  color: var(--azul-escuro);
-}
-
-.login-box-header p {
-  margin: 0;
-  font-size: 14px;
-  color: var(--text-muted);
-}
-
-.login-form {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-.login-form .field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.login-form label {
-  font-size: 12px;
-  font-weight: 800;
-  color: var(--azul-escuro);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
+.login-form { display: flex; flex-direction: column; gap: 18px; }
+.login-form .field { display: flex; flex-direction: column; gap: 6px; }
+.login-form label { font-size: 12px; font-weight: 800; color: var(--azul-escuro); text-transform: uppercase; letter-spacing: 0.5px; }
 
 .login-form input {
   padding: 12px 14px;
@@ -245,9 +194,6 @@ body {
   .banner-gif { max-height: 140px; }
 }
 
-/* =========================================================
-   ESTRUTURA DO SISTEMA (HEADER E CONTAINER)
-   ========================================================= */
 header {
   background: var(--theme-color);
   color: white;
@@ -259,52 +205,18 @@ header {
   transition: background 0.3s;
 }
 
-.window-title {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  cursor: pointer;
-}
-
-.window-title h1 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 800;
-  letter-spacing: -0.3px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.window-title span {
-  background: rgba(255, 255, 255, 0.2);
-  font-size: 11px;
-  padding: 3px 8px;
-  border-radius: 20px;
-  text-transform: uppercase;
-  color: #fff;
-  font-weight: 700;
-}
+.window-title { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+.window-title h1 { margin: 0; font-size: 18px; font-weight: 800; letter-spacing: -0.3px; display: flex; align-items: center; gap: 8px; }
+.window-title span { background: rgba(255, 255, 255, 0.2); font-size: 11px; padding: 3px 8px; border-radius: 20px; text-transform: uppercase; color: #fff; font-weight: 700; }
 
 .header-actions { display: flex; gap: 10px; align-items: center; }
 
-.app-container {
-  max-width: 1400px;
-  width: 100%;
-  margin: auto;
-  padding: 24px;
-  flex: 1;
-}
+.app-container { max-width: 1400px; width: 100%; margin: auto; padding: 24px; flex: 1; }
 
 .hub-header h2 { margin: 0 0 6px 0; font-size: 26px; font-weight: 800; color: var(--azul-claro); }
 .hub-header p { margin: 0; color: var(--text-muted); font-size: 14px; }
 
-.hub-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 24px;
-  margin-top: 20px;
-}
+.hub-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 24px; margin-top: 20px; }
 
 .hub-card {
   background: var(--surface);
@@ -509,14 +421,15 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
 </head>
 <body class="theme-hub">
 
+<!-- JANELA DE LOGIN REMODELADA -->
 <div class="login-screen" id="loginScreen">
   <div class="login-container">
     <div class="login-banner">
       <div class="banner-brand">
-        <i data-lucide="zap" size="20"></i> CONTROLE DE ESTOQUE V2
+        <i data-lucide="zap" size="20"></i> ELETROSTOCK PRO
       </div>
       <div class="banner-gif-container">
-        <img src="https://lh3.googleusercontent.com/d/1qJQXDfDcs_rF16nQZX1NSOKLEtQ3aUL7" alt="Animação de Acesso Seguro" class="banner-gif">
+        <img src="https://lh3.googleusercontent.com/d/1qJQXDfDcs_rF16nQZX1NSOKLEtQ3aUL7" alt="Acesso Seguro" class="banner-gif">
       </div>
       <div class="banner-footer">
         <h3>Acesso Seguro</h3>
@@ -561,6 +474,7 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
 
 <div class="app-container">
 
+  <!-- HUB INICIAL -->
   <div id="hubSection">
     <div class="hub-header">
       <h2>Painel Principal de Gestão</h2>
@@ -606,6 +520,7 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
     </div>
   </div>
 
+  <!-- MÓDULOS INTERNOS -->
   <div id="moduleSection" style="display:none">
     <div class="module-bar">
       <button class="btn-back" onclick="openHub()"><i data-lucide="arrow-left"></i> Voltar ao Painel Principal</button>
@@ -614,6 +529,7 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
 
     <nav class="desktop-tabs" id="moduleNav"></nav>
 
+    <!-- ABA Estoque -->
     <div id="modDashboard" class="section active">
       <div class="panel">
         <h3 id="dashTitleText"><i data-lucide="layers"></i> Itens Disponíveis</h3>
@@ -629,6 +545,7 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
       </div>
     </div>
 
+    <!-- ABA Empréstimos -->
     <div id="modLoans" class="section">
       <div class="panel">
         <h3><i data-lucide="handshake"></i> Registrar Empréstimo de Ferramenta</h3>
@@ -679,6 +596,7 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
       </div>
     </div>
 
+    <!-- ABA Saída Definitiva -->
     <div id="modExit" class="section">
       <div class="panel">
         <h3><i data-lucide="arrow-up-circle"></i> Registrar Saída Definitiva (Uso / Consumo)</h3>
@@ -710,6 +628,7 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
       </div>
     </div>
 
+    <!-- ABA Entrada -->
     <div id="modEntry" class="section">
       <div class="panel">
         <h3><i data-lucide="arrow-down-circle"></i> Receber Item (Veio do Almoxarifado Central)</h3>
@@ -737,6 +656,7 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
       </div>
     </div>
 
+    <!-- ABA Cadastro -->
     <div id="modCad" class="section">
       <div class="panel">
         <h3 id="cadFormTitle"><i data-lucide="plus-square"></i> Cadastrar Item</h3>
@@ -757,6 +677,7 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
       </div>
     </div>
 
+    <!-- ABA Histórico -->
     <div id="modHistory" class="section">
       <div class="panel">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px">
@@ -785,6 +706,7 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
   </div>
 </div>
 
+<!-- JANELA MODAL DE EDIÇÃO -->
 <div class="modal-overlay" id="editModal">
   <div class="modal-card">
     <div class="modal-header">
@@ -1321,14 +1243,19 @@ function exportCSV() {
   a.click();
 }
 
-// Inicialização
-checkAuth();
-openHub();
-  if ('serviceWorker' in navigator) {
+if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch(err => console.log('Erro PWA:', err));
+    const swCode = `
+      self.addEventListener('install', e => e.waitUntil(caches.open('pwa-cache-v1').then(c => c.addAll(['./']))));
+      self.addEventListener('fetch', e => e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))));
+    `;
+    const blob = new Blob([swCode], { type: 'application/javascript' });
+    navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(err => console.log('PWA SW:', err));
   });
 }
+
+checkAuth();
+openHub();
 </script>
 </body>
 </html>
