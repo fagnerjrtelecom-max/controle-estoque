@@ -525,13 +525,13 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
 <div class="toast" id="toast"></div>
 
 <script>
-// CONEXÃO COM SUPABASE
+// CONEXÃO COM SUPABASE (USANDO A CHAVE LEGACY ANON)
 const SUPABASE_URL = 'https://mgrrjwllygzmvpjphgz.supabase.co';
-const SUPABASE_KEY = 'sb_publishable__E4vTzpVqepM_NgJH50PWg_oYiwE9hu'; // Insira aqui a chave sb_publishable... do Supabase
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ncnJqd2xseWpnem12anBqaGd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0OTgyMjQsImV4cCI6MjEwNTA3NDIyNH0.FDLOYihhXcCQIghmZ7Rahh5ODd8rP-jzjnunF29K-fo';
 
 let supabaseClient = null;
 
-if (SUPABASE_KEY !== 'COLE_AQUI_SUA_CHAVE_PUBLISHABLE_KEY' && typeof supabase !== 'undefined') {
+if (typeof supabase !== 'undefined') {
   supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 }
 
