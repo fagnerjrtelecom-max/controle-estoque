@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Almoxarifado Elétrica — Desktop App</title>
+<title>Almoxarifado Elétrica — Cloud App</title>
 
 <!-- Configurações PWA Embutidas -->
 <meta name="theme-color" content="#000ADC">
@@ -11,11 +11,12 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIkVsZXRyb1N0b2NrIFBybyIsCiAgInNob3J0X25hbWUiOiAiRWxldHJvU3RvY2siLAogICJkZXNjcmlwdGlvbiI6ICJHZXN0YW8gZGUgQWxtb3hhcmlmYWRvIGUgRmVycmFtZW50YXMgZGEgRWxldHJpY2EiLAogICJzdGFydF91cmwiOiAiLi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiMwNjBiMjYiLAogICJ0aGVtZV9jb2xvciI6ICIjMDAwQURDIiwKICAiaWNvbnMiOiBbCiAgICB7CiAgICAgICJzcmMiOiAiaHR0cHM6Ly9jZG4taWNvbnMtcG5nLmZsYXRpY29uLmNvbS81MTIvMjk4My8yOTgzMDYzLnBuZyIsCiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICJodHRwczovL2Nkbi1pY29ucy1wbmcuZmxhdGljb24uY29tLzUxMi8yOTgzLzI5ODMwNjMucG5nIiwKICAgICAgInNpemVzIjogIjUxMng1MTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9wbmciCiAgICB9CiAgXQp9">
 
-<!-- Fonte Inter e Ícones Lucide -->
+<!-- Fonte Inter, Ícones Lucide e SDK Supabase -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 :root {
@@ -39,20 +40,9 @@
   --theme-hover: #009ce0;
 }
 
-body.theme-hub {
-  --theme-color: var(--azul-claro);
-  --theme-hover: #009be0;
-}
-
-body.theme-material {
-  --theme-color: var(--azul-escuro);
-  --theme-hover: #0008b3;
-}
-
-body.theme-ferramenta {
-  --theme-color: var(--laranja);
-  --theme-hover: #e05e00;
-}
+body.theme-hub { --theme-color: var(--azul-claro); --theme-hover: #009be0; }
+body.theme-material { --theme-color: var(--azul-escuro); --theme-hover: #0008b3; }
+body.theme-ferramenta { --theme-color: var(--laranja); --theme-hover: #e05e00; }
 
 * { box-sizing: border-box; }
 body {
@@ -67,7 +57,7 @@ body {
   transition: background-color 0.3s;
 }
 
-/* TELA DE LOGIN ESTILO SPLIT */
+/* LOGIN SPLIT */
 .login-screen {
   position: fixed;
   top: 0; left: 0; width: 100vw; height: 100vh;
@@ -103,47 +93,14 @@ body {
   color: white;
 }
 
-.banner-brand {
-  font-size: 14px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  color: var(--azul-claro);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  text-transform: uppercase;
-  z-index: 2;
-}
-
-.banner-gif-container {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 0;
-  z-index: 2;
-}
-
-.banner-gif {
-  max-width: 85%;
-  max-height: 250px;
-  object-fit: contain;
-  filter: drop-shadow(0 10px 20px rgba(0, 185, 255, 0.25));
-}
-
+.banner-brand { font-size: 14px; font-weight: 800; letter-spacing: 1px; color: var(--azul-claro); display: flex; align-items: center; gap: 8px; text-transform: uppercase; z-index: 2; }
+.banner-gif-container { flex: 1; display: flex; align-items: center; justify-content: center; padding: 10px 0; z-index: 2; }
+.banner-gif { max-width: 85%; max-height: 250px; object-fit: contain; filter: drop-shadow(0 10px 20px rgba(0, 185, 255, 0.25)); }
 .banner-footer { z-index: 2; }
 .banner-footer h3 { margin: 0 0 6px 0; font-size: 22px; font-weight: 800; color: #ffffff; }
 .banner-footer p { margin: 0; font-size: 13px; color: rgba(255, 255, 255, 0.7); line-height: 1.4; }
 
-.login-box {
-  flex: 1;
-  padding: 48px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  background: #ffffff;
-}
-
+.login-box { flex: 1; padding: 48px; display: flex; flex-direction: column; justify-content: center; background: #ffffff; }
 .login-box-header { margin-bottom: 28px; }
 .login-box-header h2 { margin: 0 0 6px 0; font-size: 26px; font-weight: 800; color: var(--azul-escuro); }
 .login-box-header p { margin: 0; font-size: 14px; color: var(--text-muted); }
@@ -166,26 +123,10 @@ body {
 }
 
 .btn-login {
-  background: var(--azul-escuro);
-  color: white;
-  border: 0;
-  padding: 13px;
-  border-radius: var(--radius-md);
-  font-weight: 700;
-  font-size: 14px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 8px;
-  transition: all 0.2s;
+  background: var(--azul-escuro); color: white; border: 0; padding: 13px; border-radius: var(--radius-md);
+  font-weight: 700; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 8px; transition: all 0.2s;
 }
-
-.btn-login:hover {
-  background: var(--azul-claro);
-  box-shadow: 0 6px 18px rgba(0, 185, 255, 0.3);
-}
+.btn-login:hover { background: var(--azul-claro); box-shadow: 0 6px 18px rgba(0, 185, 255, 0.3); }
 
 @media (max-width: 768px) {
   .login-container { flex-direction: column; }
@@ -194,48 +135,25 @@ body {
   .banner-gif { max-height: 140px; }
 }
 
-header {
-  background: var(--theme-color);
-  color: white;
-  padding: 14px 28px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  transition: background 0.3s;
-}
-
+header { background: var(--theme-color); color: white; padding: 14px 28px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); transition: background 0.3s; }
 .window-title { display: flex; align-items: center; gap: 12px; cursor: pointer; }
 .window-title h1 { margin: 0; font-size: 18px; font-weight: 800; letter-spacing: -0.3px; display: flex; align-items: center; gap: 8px; }
 .window-title span { background: rgba(255, 255, 255, 0.2); font-size: 11px; padding: 3px 8px; border-radius: 20px; text-transform: uppercase; color: #fff; font-weight: 700; }
-
 .header-actions { display: flex; gap: 10px; align-items: center; }
 
 .app-container { max-width: 1400px; width: 100%; margin: auto; padding: 24px; flex: 1; }
 
 .hub-header h2 { margin: 0 0 6px 0; font-size: 26px; font-weight: 800; color: var(--azul-claro); }
 .hub-header p { margin: 0; color: var(--text-muted); font-size: 14px; }
-
 .hub-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 24px; margin-top: 20px; }
 
 .hub-card {
-  background: var(--surface);
-  border: 2px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 32px;
-  cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  box-shadow: var(--shadow-desktop);
-  position: relative;
-  overflow: hidden;
+  background: var(--surface); border: 2px solid var(--border); border-radius: var(--radius-lg); padding: 32px; cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; justify-content: space-between;
+  box-shadow: var(--shadow-desktop); position: relative; overflow: hidden;
 }
-
 .hub-card.mat-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 6px; background: var(--azul-escuro); }
 .hub-card.tool-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 6px; background: var(--laranja); }
-
 .hub-card.mat-card:hover { transform: translateY(-5px); border-color: var(--azul-escuro); box-shadow: 0 16px 35px rgba(0, 10, 220, 0.15); }
 .hub-card.tool-card:hover { transform: translateY(-5px); border-color: var(--laranja); box-shadow: 0 16px 35px rgba(255, 108, 0, 0.15); }
 
@@ -249,114 +167,31 @@ header {
 .hub-stat-val { font-size: 24px; font-weight: 800; color: var(--text-main); }
 .hub-stat-lbl { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
 
-.module-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  background: var(--surface);
-  padding: 16px 20px;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-desktop);
-}
-
-.btn-back {
-  background: var(--bg-app);
-  color: var(--theme-color);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 8px 16px;
-  font-weight: 700;
-  font-size: 13px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
+.module-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: var(--surface); padding: 16px 20px; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow-desktop); }
+.btn-back { background: var(--bg-app); color: var(--theme-color); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 8px 16px; font-weight: 700; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
 .btn-back:hover { background: var(--theme-color); color: white; }
 
-nav.desktop-tabs {
-  display: flex;
-  gap: 6px;
-  margin-bottom: 20px;
-  background: var(--surface);
-  padding: 6px;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-desktop);
-}
-
-nav.desktop-tabs button {
-  border: 0;
-  background: transparent;
-  color: var(--text-muted);
-  padding: 10px 18px;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  font-weight: 700;
-  font-size: 13px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
+nav.desktop-tabs { display: flex; gap: 6px; margin-bottom: 20px; background: var(--surface); padding: 6px; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow-desktop); }
+nav.desktop-tabs button { border: 0; background: transparent; color: var(--text-muted); padding: 10px 18px; border-radius: var(--radius-md); cursor: pointer; font-weight: 700; font-size: 13px; display: flex; align-items: center; gap: 8px; }
 nav.desktop-tabs button:hover { color: var(--theme-color); background: rgba(0, 0, 0, 0.04); }
 nav.desktop-tabs button.active { background: var(--theme-color); color: white; }
 
 .section { display: none; }
 .section.active { display: block; }
 
-.panel {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 24px;
-  box-shadow: var(--shadow-desktop);
-  margin-bottom: 20px;
-}
-
+.panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-desktop); margin-bottom: 20px; }
 .panel h3 { margin: 0 0 18px 0; font-size: 16px; font-weight: 700; color: var(--theme-color); display: flex; align-items: center; gap: 8px; }
 
 .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
 .field { display: flex; flex-direction: column; gap: 6px; }
 .field label { font-size: 12px; font-weight: 700; color: var(--theme-color); text-transform: uppercase; }
 
-input, select, textarea {
-  width: 100%;
-  padding: 11px 14px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  font: inherit;
-  font-size: 14px;
-  background: #fdfefe;
-}
-
-input:focus, select:focus, textarea:focus {
-  outline: none;
-  border-color: var(--theme-color);
-  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
-}
-
+input, select, textarea { width: 100%; padding: 11px 14px; border: 1px solid var(--border); border-radius: var(--radius-md); font: inherit; font-size: 14px; background: #fdfefe; }
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--theme-color); box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08); }
 textarea { resize: vertical; min-height: 70px; }
 
 .actions { display: flex; gap: 10px; margin-top: 18px; }
-
-.btn {
-  border: 0;
-  border-radius: var(--radius-md);
-  padding: 10px 20px;
-  cursor: pointer;
-  font-weight: 700;
-  font-size: 13px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  transition: all 0.2s;
-}
-
+.btn { border: 0; border-radius: var(--radius-md); padding: 10px 20px; cursor: pointer; font-weight: 700; font-size: 13px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; }
 .btn.primary { background: var(--theme-color); color: white; }
 .btn.primary:hover { background: var(--theme-hover); }
 .btn.success { background: var(--success); color: white; }
@@ -379,55 +214,21 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
 .search-bar { display: flex; gap: 10px; margin-bottom: 16px; max-width: 500px; }
 .empty { text-align: center; padding: 40px; color: var(--text-muted); }
 
-.modal-overlay {
-  position: fixed;
-  top: 0; left: 0; width: 100vw; height: 100vh;
-  background: rgba(12, 21, 42, 0.6);
-  backdrop-filter: blur(4px);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-.modal-card {
-  background: white;
-  width: 100%;
-  max-width: 550px;
-  border-radius: var(--radius-lg);
-  padding: 28px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-  border: 1px solid var(--border);
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  border-bottom: 1px solid var(--border);
-  padding-bottom: 12px;
-}
-
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(12, 21, 42, 0.6); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 1000; }
+.modal-card { background: white; width: 100%; max-width: 550px; border-radius: var(--radius-lg); padding: 28px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); border: 1px solid var(--border); }
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 12px; }
 .modal-header h3 { margin: 0; font-size: 18px; color: var(--theme-color); font-weight: 800; }
 
-.toast {
-  position: fixed; right: 24px; bottom: 24px; background: #0f172a; color: white;
-  padding: 14px 22px; border-radius: var(--radius-md); display: none; z-index: 9999;
-  font-size: 14px; font-weight: 600; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-  border-left: 4px solid var(--theme-color);
-}
+.toast { position: fixed; right: 24px; bottom: 24px; background: #0f172a; color: white; padding: 14px 22px; border-radius: var(--radius-md); display: none; z-index: 9999; font-size: 14px; font-weight: 600; box-shadow: 0 10px 25px rgba(0,0,0,0.2); border-left: 4px solid var(--theme-color); }
 </style>
 </head>
 <body class="theme-hub">
 
-<!-- JANELA DE LOGIN REMODELADA -->
+<!-- LOGIN -->
 <div class="login-screen" id="loginScreen">
   <div class="login-container">
     <div class="login-banner">
-      <div class="banner-brand">
-        <i data-lucide="zap" size="20"></i> ELETROSTOCK PRO
-      </div>
+      <div class="banner-brand"><i data-lucide="zap" size="20"></i> ELETROSTOCK PRO</div>
       <div class="banner-gif-container">
         <img src="https://lh3.googleusercontent.com/d/1qJQXDfDcs_rF16nQZX1NSOKLEtQ3aUL7" alt="Acesso Seguro" class="banner-gif">
       </div>
@@ -462,7 +263,7 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
 <header>
   <div class="window-title" onclick="openHub()">
     <h1><i data-lucide="cpu"></i> ALMOXARIFADO ELÉTRICA</h1>
-    <span>Pro Desktop</span>
+    <span>Pro Cloud</span>
   </div>
   <div class="header-actions">
     <button class="btn secondary small" onclick="exportData()"><i data-lucide="download"></i> Backup JSON</button>
@@ -706,7 +507,7 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
   </div>
 </div>
 
-<!-- JANELA MODAL DE EDIÇÃO -->
+<!-- MODAL DE EDIÇÃO -->
 <div class="modal-overlay" id="editModal">
   <div class="modal-card">
     <div class="modal-header">
@@ -724,6 +525,16 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
 <div class="toast" id="toast"></div>
 
 <script>
+// CONEXÃO COM SUPABASE
+const SUPABASE_URL = 'https://mgrrjwllygzmvpjphgz.supabase.co';
+const SUPABASE_KEY = 'sb_publishable__E4vTzpVqepM_NgJH50PWg_oYiwE9hu'; // Insira aqui a chave sb_publishable... do Supabase
+
+let supabaseClient = null;
+
+if (SUPABASE_KEY !== 'COLE_AQUI_SUA_CHAVE_PUBLISHABLE_KEY' && typeof supabase !== 'undefined') {
+  supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+}
+
 const KEY_M = 'eletrica_itens_v10';
 const KEY_H = 'eletrica_hist_v10';
 const KEY_L = 'eletrica_loans_v10';
@@ -734,6 +545,31 @@ let history = JSON.parse(localStorage.getItem(KEY_H) || '[]');
 let activeLoans = JSON.parse(localStorage.getItem(KEY_L) || '[]');
 
 let currentModule = null;
+
+async function syncWithCloud() {
+  if (!supabaseClient) return;
+  try {
+    const { data: mats } = await supabaseClient.from('materials').select('*');
+    const { data: loans } = await supabaseClient.from('active_loans').select('*');
+    const { data: hist } = await supabaseClient.from('history').select('*');
+
+    if (mats) {
+      materials = mats.map(m => ({ id: m.id, name: m.name, type: m.type, category: m.category, unit: m.unit, min: Number(m.min), stock: Number(m.stock) }));
+      localStorage.setItem(KEY_M, JSON.stringify(materials));
+    }
+    if (loans) {
+      activeLoans = loans.map(l => ({ id: l.id, materialId: l.material_id, materialName: l.material_name, unit: l.unit, qty: Number(l.qty), person: l.person, location: l.location, date: l.date, obs: l.obs }));
+      localStorage.setItem(KEY_L, JSON.stringify(activeLoans));
+    }
+    if (hist) {
+      history = hist.map(h => ({ id: h.id, date: h.date, type: h.type, moduleType: h.module_type, material: h.material, qty: h.qty, person: h.person, ref: h.ref, obs: h.obs }));
+      localStorage.setItem(KEY_H, JSON.stringify(history));
+    }
+
+    updateHubStats();
+    if (currentModule) renderModule();
+  } catch (err) { console.log('Erro de sincronização:', err); }
+}
 
 function checkAuth() {
   const isAuth = localStorage.getItem(KEY_AUTH);
@@ -768,12 +604,20 @@ function checkEnter(e) {
   if (e.key === 'Enter') handleLogin();
 }
 
-function save() {
+async function save() {
   localStorage.setItem(KEY_M, JSON.stringify(materials));
   localStorage.setItem(KEY_H, JSON.stringify(history));
   localStorage.setItem(KEY_L, JSON.stringify(activeLoans));
   updateHubStats();
   if (currentModule) renderModule();
+
+  if (supabaseClient) {
+    try {
+      await supabaseClient.from('materials').upsert(materials.map(m => ({ id: m.id, name: m.name, type: m.type, category: m.category, unit: m.unit, min: m.min, stock: m.stock })));
+      await supabaseClient.from('active_loans').upsert(activeLoans.map(l => ({ id: l.id, material_id: l.materialId, material_name: l.materialName, unit: l.unit, qty: l.qty, person: l.person, location: l.location, date: l.date, obs: l.obs })));
+      await supabaseClient.from('history').upsert(history.map(h => ({ id: h.id, date: h.date, type: h.type, module_type: h.moduleType, material: h.material, qty: h.qty, person: h.person, ref: h.ref, obs: h.obs })));
+    } catch (err) { console.log('Erro ao salvar na nuvem:', err); }
+  }
 }
 
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
@@ -1062,7 +906,7 @@ function registerLoan() {
   toast('Empréstimo registrado!');
 }
 
-function returnLoan(loanId) {
+async function returnLoan(loanId) {
   const index = activeLoans.findIndex(l => l.id === loanId);
   if (index === -1) return;
 
@@ -1080,14 +924,23 @@ function returnLoan(loanId) {
     obs: 'Ferramenta devolvida ao quarto'
   });
 
+  if (supabaseClient) {
+    try { await supabaseClient.from('active_loans').delete().eq('id', loanId); } catch(e){}
+  }
+
   activeLoans.splice(index, 1);
   save();
   toast('Devolução registrada com sucesso!');
 }
 
-function deleteMaterial(id) {
+async function deleteMaterial(id) {
   const m = materials.find(x => x.id === id);
   if (!confirm(`Remover "${m.name}" do cadastro?`)) return;
+
+  if (supabaseClient) {
+    try { await supabaseClient.from('materials').delete().eq('id', id); } catch(e){}
+  }
+
   materials = materials.filter(x => x.id !== id);
   save();
   toast('Item excluído.');
@@ -1255,6 +1108,7 @@ if ('serviceWorker' in navigator) {
 }
 
 checkAuth();
+syncWithCloud();
 openHub();
 </script>
 </body>
