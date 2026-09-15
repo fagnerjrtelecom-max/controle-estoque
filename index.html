@@ -11,12 +11,11 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIkVsZXRyb1N0b2NrIFBybyIsCiAgInNob3J0X25hbWUiOiAiRWxldHJvU3RvY2siLAogICJkZXNjcmlwdGlvbiI6ICJHZXN0YW8gZGUgQWxtb3hhcmlmYWRvIGUgRmVycmFtZW50YXMgZGEgRWxldHJpY2EiLAogICJzdGFydF91cmwiOiAiLi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiMwNjBiMjYiLAogICJ0aGVtZV9jb2xvciI6ICIjMDAwQURDIiwKICAiaWNvbnMiOiBbCiAgICB7CiAgICAgICJzcmMiOiAiaHR0cHM6Ly9jZG4taWNvbnMtcG5nLmZsYXRpY29uLmNvbS81MTIvMjk43LzI5ODMwNjMucG5nIiwKICAgICAgInNpemVzIjogIjE5MngxOTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9wbmciCiAgICB9LAogICAgewogICAgICAic3JjIjogImh0dHBzOi8vY2RuLWljb25zLXBuZy5mbGF0aWNvbi5jb20vNTEyLzI5ODMvMjk4MzA2My5wbmciLAogICAgICAic2l6ZXMiOiAiNTEyeDUxMiIsCiAgICAgICJ0eXBlIjogImltYWdlL3BuZyIKICAgIH0KICBdCn0=">
 
-<!-- Fonte Inter, Ícones Lucide e SDK Supabase -->
+<!-- Fonte Inter e Ícones Lucide -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lucide@latest"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 :root {
@@ -525,19 +524,16 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
 <div class="toast" id="toast"></div>
 
 <script>
-// CONEXÃO ISOLADA E PROTEGIDA COM SUPABASE
-const SUPABASE_URL = 'https://mgrrjwllygzmvpjphgz.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ncnJqd2xseWpnem12anBqaGd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0OTgyMjQsImV4cCI6MjEwNTA3NDIyNH0.FDLOYihhXcCQIghmZ7Rahh5ODd8rP-jzjnunF29K-fo';
+// CONEXÃO DIRETA COM SUPABASE VIA API REST
+const API_URL = 'https://mgrrjwllygzmvpjphgz.supabase.co/rest/v1';
+const API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ncnJqd2xseWpnem12anBqaGd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0OTgyMjQsImV4cCI6MjEwNTA3NDIyNH0.FDLOYihhXcCQIghmZ7Rahh5ODd8rP-jzjnunF29K-fo';
 
-let supabaseClient = null;
-
-try {
-  if (window.supabase && typeof window.supabase.createClient === 'function') {
-    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-  }
-} catch (e) {
-  console.warn('Iniciando sem banco em nuvem.');
-}
+const headers = {
+  'apikey': API_KEY,
+  'Authorization': 'Bearer ' + API_KEY,
+  'Content-Type': 'application/json',
+  'Prefer': 'return=representation'
+};
 
 const KEY_M = 'eletrica_itens_v10';
 const KEY_H = 'eletrica_hist_v10';
@@ -550,31 +546,40 @@ let activeLoans = JSON.parse(localStorage.getItem(KEY_L) || '[]');
 
 let currentModule = null;
 
-// Sincronização Não-Bloqueante (Background Safe)
-function syncWithCloud() {
-  if (!supabaseClient) return;
+// Sincronização via Chamadas REST Diretas
+async function syncWithCloud() {
+  try {
+    const [resMats, resLoans, resHist] = await Promise.all([
+      fetch(`${API_URL}/materials?select=*`, { headers }),
+      fetch(`${API_URL}/active_loans?select=*`, { headers }),
+      fetch(`${API_URL}/history?select=*`, { headers })
+    ]);
 
-  Promise.all([
-    supabaseClient.from('materials').select('*'),
-    supabaseClient.from('active_loans').select('*'),
-    supabaseClient.from('history').select('*')
-  ]).then(([resMats, resLoans, resHist]) => {
-    if (!resMats.error && resMats.data && resMats.data.length > 0) {
-      materials = resMats.data.map(m => ({ id: m.id, name: m.name, type: m.type, category: m.category, unit: m.unit, min: Number(m.min), stock: Number(m.stock) }));
-      localStorage.setItem(KEY_M, JSON.stringify(materials));
+    if (resMats.ok) {
+      const mats = await resMats.json();
+      if (mats && mats.length > 0) {
+        materials = mats.map(m => ({ id: m.id, name: m.name, type: m.type, category: m.category, unit: m.unit, min: Number(m.min), stock: Number(m.stock) }));
+        localStorage.setItem(KEY_M, JSON.stringify(materials));
+      }
     }
-    if (!resLoans.error && resLoans.data) {
-      activeLoans = resLoans.data.map(l => ({ id: l.id, materialId: l.material_id, materialName: l.material_name, unit: l.unit, qty: Number(l.qty), person: l.person, location: l.location, date: l.date, obs: l.obs }));
+
+    if (resLoans.ok) {
+      const loans = await resLoans.json();
+      activeLoans = loans.map(l => ({ id: l.id, materialId: l.material_id, materialName: l.material_name, unit: l.unit, qty: Number(l.qty), person: l.person, location: l.location, date: l.date, obs: l.obs }));
       localStorage.setItem(KEY_L, JSON.stringify(activeLoans));
     }
-    if (!resHist.error && resHist.data) {
-      history = resHist.data.map(h => ({ id: h.id, date: h.date, type: h.type, moduleType: h.module_type, material: h.material, qty: h.qty, person: h.person, ref: h.ref, obs: h.obs }));
+
+    if (resHist.ok) {
+      const hist = await resHist.json();
+      history = hist.map(h => ({ id: h.id, date: h.date, type: h.type, moduleType: h.module_type, material: h.material, qty: h.qty, person: h.person, ref: h.ref, obs: h.obs }));
       localStorage.setItem(KEY_H, JSON.stringify(history));
     }
 
     updateHubStats();
     if (currentModule) renderModule();
-  }).catch(err => console.warn('Modo offline mantido:', err));
+  } catch (err) {
+    console.warn('Operando com cache local.');
+  }
 }
 
 function checkAuth() {
@@ -610,23 +615,28 @@ function checkEnter(e) {
   if (e.key === 'Enter') handleLogin();
 }
 
-function save() {
+async function save() {
   localStorage.setItem(KEY_M, JSON.stringify(materials));
   localStorage.setItem(KEY_H, JSON.stringify(history));
   localStorage.setItem(KEY_L, JSON.stringify(activeLoans));
   updateHubStats();
   if (currentModule) renderModule();
 
-  if (supabaseClient) {
+  try {
     if (materials.length > 0) {
-      supabaseClient.from('materials').upsert(materials.map(m => ({ id: m.id, name: m.name, type: m.type, category: m.category, unit: m.unit, min: m.min, stock: m.stock }))).then().catch(()=>{});
+      const payloadMats = materials.map(m => ({ id: m.id, name: m.name, type: m.type, category: m.category, unit: m.unit, min: m.min, stock: m.stock }));
+      fetch(`${API_URL}/materials`, { method: 'POST', headers: { ...headers, 'Prefer': 'resolution=merge-duplicates' }, body: JSON.stringify(payloadMats) });
     }
     if (activeLoans.length > 0) {
-      supabaseClient.from('active_loans').upsert(activeLoans.map(l => ({ id: l.id, material_id: l.materialId, material_name: l.materialName, unit: l.unit, qty: l.qty, person: l.person, location: l.location, date: l.date, obs: l.obs }))).then().catch(()=>{});
+      const payloadLoans = activeLoans.map(l => ({ id: l.id, material_id: l.materialId, material_name: l.materialName, unit: l.unit, qty: l.qty, person: l.person, location: l.location, date: l.date, obs: l.obs }));
+      fetch(`${API_URL}/active_loans`, { method: 'POST', headers: { ...headers, 'Prefer': 'resolution=merge-duplicates' }, body: JSON.stringify(payloadLoans) });
     }
     if (history.length > 0) {
-      supabaseClient.from('history').upsert(history.map(h => ({ id: h.id, date: h.date, type: h.type, module_type: h.moduleType, material: h.material, qty: h.qty, person: h.person, ref: h.ref, obs: h.obs }))).then().catch(()=>{});
+      const payloadHist = history.map(h => ({ id: h.id, date: h.date, type: h.type, module_type: h.moduleType, material: h.material, qty: h.qty, person: h.person, ref: h.ref, obs: h.obs }));
+      fetch(`${API_URL}/history`, { method: 'POST', headers: { ...headers, 'Prefer': 'resolution=merge-duplicates' }, body: JSON.stringify(payloadHist) });
     }
+  } catch (err) {
+    console.warn('Erro na gravação remota.');
   }
 }
 
@@ -934,9 +944,7 @@ function returnLoan(loanId) {
     obs: 'Ferramenta devolvida ao quarto'
   });
 
-  if (supabaseClient) {
-    supabaseClient.from('active_loans').delete().eq('id', loanId).then().catch(()=>{});
-  }
+  fetch(`${API_URL}/active_loans?id=eq.${loanId}`, { method: 'DELETE', headers });
 
   activeLoans.splice(index, 1);
   save();
@@ -947,9 +955,7 @@ function deleteMaterial(id) {
   const m = materials.find(x => x.id === id);
   if (!confirm(`Remover "${m.name}" do cadastro?`)) return;
 
-  if (supabaseClient) {
-    supabaseClient.from('materials').delete().eq('id', id).then().catch(()=>{});
-  }
+  fetch(`${API_URL}/materials?id=eq.${id}`, { method: 'DELETE', headers });
 
   materials = materials.filter(x => x.id !== id);
   save();
@@ -1106,10 +1112,10 @@ function exportCSV() {
   a.click();
 }
 
-// Inicialização Estável
+// Inicialização Estável e Sincronizada
 checkAuth();
 openHub();
-setTimeout(syncWithCloud, 1000);
+syncWithCloud();
 </script>
 </body>
 </html>
