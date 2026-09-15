@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#000ADC">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIkVsZXRyb1N0b2NrIFBybyIsCiAgInNob3J0X25hbWUiOiAiRWxldHJvU3RvY2siLAogICJkZXNjcmlwdGlvbiI6ICJHZXN0YW8gZGUgQWxtb3hhcmlmYWRvIGUgRmVycmFtZW50YXMgZGEgRWxldHJpY2EiLAogICJzdGFydF91cmwiOiAiLi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiMwNjBiMjYiLAogICJ0aGVtZV9jb2xvciI6ICIjMDAwQURDIiwKICAiaWNvbnMiOiBbCiAgICB7CiAgICAgICJzcmMiOiAiaHR0cHM6Ly9jZG4taWNvbnMtcG5nLmZsYXRpY29uLmNvbS81MTIvMjk4My8yOTgzMDYzLnBuZyIsCiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICJodHRwczovL2Nkbi1pY29ucy1wbmcuZmxhdGljb24uY29tLzUxMi8yOTgzLzI5ODMwNjMucG5nIiwKICAgICAgInNpemVzIjogIjUxMng1MTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9wbmciCiAgICB9CiAgXQp9">
+<link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIkVsZXRyb1N0b2NrIFBybyIsCiAgInNob3J0X25hbWUiOiAiRWxldHJvU3RvY2siLAogICJkZXNjcmlwdGlvbiI6ICJHZXN0YW8gZGUgQWxtb3hhcmlmYWRvIGUgRmVycmFtZW50YXMgZGEgRWxldHJpY2EiLAogICJzdGFydF91cmwiOiAiLi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiMwNjBiMjYiLAogICJ0aGVtZV9jb2xvciI6ICIjMDAwQURDIiwKICAiaWNvbnMiOiBbCiAgICB7CiAgICAgICJzcmMiOiAiaHR0cHM6Ly9jZG4taWNvbnMtcG5nLmZsYXRpY29uLmNvbS81MTIvMjk43LzI5ODMwNjMucG5nIiwKICAgICAgInNpemVzIjogIjE5MngxOTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9wbmciCiAgICB9LAogICAgewogICAgICAic3JjIjogImh0dHBzOi8vY2RuLWljb25zLXBuZy5mbGF0aWNvbi5jb20vNTEyLzI5ODMvMjk4MzA2My5wbmciLAogICAgICAic2l6ZXMiOiAiNTEyeDUxMiIsCiAgICAgICJ0eXBlIjogImltYWdlL3BuZyIKICAgIH0KICBdCn0=">
 
 <!-- Fonte Inter, Ícones Lucide e SDK Supabase -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -525,18 +525,18 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
 <div class="toast" id="toast"></div>
 
 <script>
-// CONEXÃO COM SUPABASE
+// CONEXÃO ISOLADA E PROTEGIDA COM SUPABASE
 const SUPABASE_URL = 'https://mgrrjwllygzmvpjphgz.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ncnJqd2xseWpnem12anBqaGd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0OTgyMjQsImV4cCI6MjEwNTA3NDIyNH0.FDLOYihhXcCQIghmZ7Rahh5ODd8rP-jzjnunF29K-fo';
 
 let supabaseClient = null;
 
-if (typeof supabase !== 'undefined') {
-  try {
-    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-  } catch (err) {
-    console.warn('Supabase não inicializado:', err);
+try {
+  if (window.supabase && typeof window.supabase.createClient === 'function') {
+    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   }
+} catch (e) {
+  console.warn('Iniciando sem banco em nuvem.');
 }
 
 const KEY_M = 'eletrica_itens_v10';
@@ -550,29 +550,31 @@ let activeLoans = JSON.parse(localStorage.getItem(KEY_L) || '[]');
 
 let currentModule = null;
 
-async function syncWithCloud() {
+// Sincronização Não-Bloqueante (Background Safe)
+function syncWithCloud() {
   if (!supabaseClient) return;
-  try {
-    const { data: mats, error: errMats } = await supabaseClient.from('materials').select('*');
-    const { data: loans, error: errLoans } = await supabaseClient.from('active_loans').select('*');
-    const { data: hist, error: errHist } = await supabaseClient.from('history').select('*');
 
-    if (!errMats && mats && mats.length > 0) {
-      materials = mats.map(m => ({ id: m.id, name: m.name, type: m.type, category: m.category, unit: m.unit, min: Number(m.min), stock: Number(m.stock) }));
+  Promise.all([
+    supabaseClient.from('materials').select('*'),
+    supabaseClient.from('active_loans').select('*'),
+    supabaseClient.from('history').select('*')
+  ]).then(([resMats, resLoans, resHist]) => {
+    if (!resMats.error && resMats.data && resMats.data.length > 0) {
+      materials = resMats.data.map(m => ({ id: m.id, name: m.name, type: m.type, category: m.category, unit: m.unit, min: Number(m.min), stock: Number(m.stock) }));
       localStorage.setItem(KEY_M, JSON.stringify(materials));
     }
-    if (!errLoans && loans) {
-      activeLoans = loans.map(l => ({ id: l.id, materialId: l.material_id, materialName: l.material_name, unit: l.unit, qty: Number(l.qty), person: l.person, location: l.location, date: l.date, obs: l.obs }));
+    if (!resLoans.error && resLoans.data) {
+      activeLoans = resLoans.data.map(l => ({ id: l.id, materialId: l.material_id, materialName: l.material_name, unit: l.unit, qty: Number(l.qty), person: l.person, location: l.location, date: l.date, obs: l.obs }));
       localStorage.setItem(KEY_L, JSON.stringify(activeLoans));
     }
-    if (!errHist && hist) {
-      history = hist.map(h => ({ id: h.id, date: h.date, type: h.type, moduleType: h.module_type, material: h.material, qty: h.qty, person: h.person, ref: h.ref, obs: h.obs }));
+    if (!resHist.error && resHist.data) {
+      history = resHist.data.map(h => ({ id: h.id, date: h.date, type: h.type, moduleType: h.module_type, material: h.material, qty: h.qty, person: h.person, ref: h.ref, obs: h.obs }));
       localStorage.setItem(KEY_H, JSON.stringify(history));
     }
 
     updateHubStats();
     if (currentModule) renderModule();
-  } catch (err) { console.log('Erro de sincronização:', err); }
+  }).catch(err => console.warn('Modo offline mantido:', err));
 }
 
 function checkAuth() {
@@ -608,7 +610,7 @@ function checkEnter(e) {
   if (e.key === 'Enter') handleLogin();
 }
 
-async function save() {
+function save() {
   localStorage.setItem(KEY_M, JSON.stringify(materials));
   localStorage.setItem(KEY_H, JSON.stringify(history));
   localStorage.setItem(KEY_L, JSON.stringify(activeLoans));
@@ -616,17 +618,15 @@ async function save() {
   if (currentModule) renderModule();
 
   if (supabaseClient) {
-    try {
-      if (materials.length > 0) {
-        await supabaseClient.from('materials').upsert(materials.map(m => ({ id: m.id, name: m.name, type: m.type, category: m.category, unit: m.unit, min: m.min, stock: m.stock })));
-      }
-      if (activeLoans.length > 0) {
-        await supabaseClient.from('active_loans').upsert(activeLoans.map(l => ({ id: l.id, material_id: l.materialId, material_name: l.materialName, unit: l.unit, qty: l.qty, person: l.person, location: l.location, date: l.date, obs: l.obs })));
-      }
-      if (history.length > 0) {
-        await supabaseClient.from('history').upsert(history.map(h => ({ id: h.id, date: h.date, type: h.type, module_type: h.moduleType, material: h.material, qty: h.qty, person: h.person, ref: h.ref, obs: h.obs })));
-      }
-    } catch (err) { console.log('Erro ao salvar na nuvem:', err); }
+    if (materials.length > 0) {
+      supabaseClient.from('materials').upsert(materials.map(m => ({ id: m.id, name: m.name, type: m.type, category: m.category, unit: m.unit, min: m.min, stock: m.stock }))).then().catch(()=>{});
+    }
+    if (activeLoans.length > 0) {
+      supabaseClient.from('active_loans').upsert(activeLoans.map(l => ({ id: l.id, material_id: l.materialId, material_name: l.materialName, unit: l.unit, qty: l.qty, person: l.person, location: l.location, date: l.date, obs: l.obs }))).then().catch(()=>{});
+    }
+    if (history.length > 0) {
+      supabaseClient.from('history').upsert(history.map(h => ({ id: h.id, date: h.date, type: h.type, module_type: h.moduleType, material: h.material, qty: h.qty, person: h.person, ref: h.ref, obs: h.obs }))).then().catch(()=>{});
+    }
   }
 }
 
@@ -916,7 +916,7 @@ function registerLoan() {
   toast('Empréstimo registrado!');
 }
 
-async function returnLoan(loanId) {
+function returnLoan(loanId) {
   const index = activeLoans.findIndex(l => l.id === loanId);
   if (index === -1) return;
 
@@ -935,7 +935,7 @@ async function returnLoan(loanId) {
   });
 
   if (supabaseClient) {
-    try { await supabaseClient.from('active_loans').delete().eq('id', loanId); } catch(e){}
+    supabaseClient.from('active_loans').delete().eq('id', loanId).then().catch(()=>{});
   }
 
   activeLoans.splice(index, 1);
@@ -943,12 +943,12 @@ async function returnLoan(loanId) {
   toast('Devolução registrada com sucesso!');
 }
 
-async function deleteMaterial(id) {
+function deleteMaterial(id) {
   const m = materials.find(x => x.id === id);
   if (!confirm(`Remover "${m.name}" do cadastro?`)) return;
 
   if (supabaseClient) {
-    try { await supabaseClient.from('materials').delete().eq('id', id); } catch(e){}
+    supabaseClient.from('materials').delete().eq('id', id).then().catch(()=>{});
   }
 
   materials = materials.filter(x => x.id !== id);
@@ -1106,20 +1106,10 @@ function exportCSV() {
   a.click();
 }
 
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    const swCode = `
-      self.addEventListener('install', e => e.waitUntil(caches.open('pwa-cache-v1').then(c => c.addAll(['./']))));
-      self.addEventListener('fetch', e => e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))));
-    `;
-    const blob = new Blob([swCode], { type: 'application/javascript' });
-    navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(err => console.log('PWA SW:', err));
-  });
-}
-
+// Inicialização Estável
 checkAuth();
-syncWithCloud();
 openHub();
+setTimeout(syncWithCloud, 1000);
 </script>
 </body>
 </html>
