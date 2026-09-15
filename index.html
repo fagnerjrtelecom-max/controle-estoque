@@ -525,14 +525,18 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
 <div class="toast" id="toast"></div>
 
 <script>
-// CONEXÃO COM SUPABASE (USANDO A CHAVE LEGACY ANON)
+// CONEXÃO COM SUPABASE
 const SUPABASE_URL = 'https://mgrrjwllygzmvpjphgz.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ncnJqd2xseWpnem12anBqaGd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0OTgyMjQsImV4cCI6MjEwNTA3NDIyNH0.FDLOYihhXcCQIghmZ7Rahh5ODd8rP-jzjnunF29K-fo';
 
 let supabaseClient = null;
 
 if (typeof supabase !== 'undefined') {
-  supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  try {
+    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  } catch (err) {
+    console.warn('Supabase não inicializado:', err);
+  }
 }
 
 const KEY_M = 'eletrica_itens_v10';
@@ -549,19 +553,19 @@ let currentModule = null;
 async function syncWithCloud() {
   if (!supabaseClient) return;
   try {
-    const { data: mats } = await supabaseClient.from('materials').select('*');
-    const { data: loans } = await supabaseClient.from('active_loans').select('*');
-    const { data: hist } = await supabaseClient.from('history').select('*');
+    const { data: mats, error: errMats } = await supabaseClient.from('materials').select('*');
+    const { data: loans, error: errLoans } = await supabaseClient.from('active_loans').select('*');
+    const { data: hist, error: errHist } = await supabaseClient.from('history').select('*');
 
-    if (mats) {
+    if (!errMats && mats && mats.length > 0) {
       materials = mats.map(m => ({ id: m.id, name: m.name, type: m.type, category: m.category, unit: m.unit, min: Number(m.min), stock: Number(m.stock) }));
       localStorage.setItem(KEY_M, JSON.stringify(materials));
     }
-    if (loans) {
+    if (!errLoans && loans) {
       activeLoans = loans.map(l => ({ id: l.id, materialId: l.material_id, materialName: l.material_name, unit: l.unit, qty: Number(l.qty), person: l.person, location: l.location, date: l.date, obs: l.obs }));
       localStorage.setItem(KEY_L, JSON.stringify(activeLoans));
     }
-    if (hist) {
+    if (!errHist && hist) {
       history = hist.map(h => ({ id: h.id, date: h.date, type: h.type, moduleType: h.module_type, material: h.material, qty: h.qty, person: h.person, ref: h.ref, obs: h.obs }));
       localStorage.setItem(KEY_H, JSON.stringify(history));
     }
@@ -613,9 +617,15 @@ async function save() {
 
   if (supabaseClient) {
     try {
-      await supabaseClient.from('materials').upsert(materials.map(m => ({ id: m.id, name: m.name, type: m.type, category: m.category, unit: m.unit, min: m.min, stock: m.stock })));
-      await supabaseClient.from('active_loans').upsert(activeLoans.map(l => ({ id: l.id, material_id: l.materialId, material_name: l.materialName, unit: l.unit, qty: l.qty, person: l.person, location: l.location, date: l.date, obs: l.obs })));
-      await supabaseClient.from('history').upsert(history.map(h => ({ id: h.id, date: h.date, type: h.type, module_type: h.moduleType, material: h.material, qty: h.qty, person: h.person, ref: h.ref, obs: h.obs })));
+      if (materials.length > 0) {
+        await supabaseClient.from('materials').upsert(materials.map(m => ({ id: m.id, name: m.name, type: m.type, category: m.category, unit: m.unit, min: m.min, stock: m.stock })));
+      }
+      if (activeLoans.length > 0) {
+        await supabaseClient.from('active_loans').upsert(activeLoans.map(l => ({ id: l.id, material_id: l.materialId, material_name: l.materialName, unit: l.unit, qty: l.qty, person: l.person, location: l.location, date: l.date, obs: l.obs })));
+      }
+      if (history.length > 0) {
+        await supabaseClient.from('history').upsert(history.map(h => ({ id: h.id, date: h.date, type: h.type, module_type: h.moduleType, material: h.material, qty: h.qty, person: h.person, ref: h.ref, obs: h.obs })));
+      }
     } catch (err) { console.log('Erro ao salvar na nuvem:', err); }
   }
 }
