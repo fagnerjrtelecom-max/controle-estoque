@@ -9,7 +9,6 @@
 <meta name="theme-color" content="#000ADC">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="manifest" href="manifest.json">
 
 <!-- Fonte Inter e Ícones Lucide -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -523,62 +522,53 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
 
 <div class="toast" id="toast"></div>
 
-<script>
-// CONEXÃO DIRETA COM SUPABASE VIA API REST
-const API_URL = 'https://mgrrjwllygzmvpjphgz.supabase.co/rest/v1';
-const API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ncnJqd2xseWpnem12anBqaGd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0OTgyMjQsImV4cCI6MjEwNTA3NDIyNH0.FDLOYihhXcCQIghmZ7Rahh5ODd8rP-jzjnunF29K-fo';
+<!-- SDKs do Firebase Compatível -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
-const headers = {
-  'apikey': API_KEY,
-  'Authorization': 'Bearer ' + API_KEY,
-  'Content-Type': 'application/json',
-  'Prefer': 'return=representation'
+<script>
+// CONFIGURAÇÃO DO FIREBASE (Mesmo Projeto do Sistema de Chaves)
+const firebaseConfig = {
+  apiKey: "AIzaSyC24cBsTKfs57YYsE_gGra7mlE5qnrhezg",
+  authDomain: "chaves-jrtelecom.firebaseapp.com",
+  projectId: "chaves-jrtelecom",
+  storageBucket: "chaves-jrtelecom.firebasestorage.app",
+  messagingSenderId: "541047638923",
+  appId: "1:541047638923:web:e647064760f1da0b957d8e"
 };
 
-const KEY_M = 'eletrica_itens_v10';
-const KEY_H = 'eletrica_hist_v10';
-const KEY_L = 'eletrica_loans_v10';
+firebase.initializeApp(firebaseConfig);
+const dbFirestore = firebase.firestore();
+
 const KEY_AUTH = 'eletrica_auth_v10';
 
-let materials = JSON.parse(localStorage.getItem(KEY_M) || '[]');
-let history = JSON.parse(localStorage.getItem(KEY_H) || '[]');
-let activeLoans = JSON.parse(localStorage.getItem(KEY_L) || '[]');
-
+let materials = [];
+let history = [];
+let activeLoans = [];
 let currentModule = null;
 
-async function syncWithCloud() {
-  try {
-    const [resMats, resLoans, resHist] = await Promise.all([
-      fetch(`${API_URL}/materials?select=*`, { headers }),
-      fetch(`${API_URL}/active_loans?select=*`, { headers }),
-      fetch(`${API_URL}/history?select=*`, { headers })
-    ]);
-
-    if (resMats.ok) {
-      const mats = await resMats.json();
-      if (mats && mats.length > 0) {
-        materials = mats.map(m => ({ id: m.id, name: m.name, type: m.type, category: m.category, unit: m.unit, min: Number(m.min), stock: Number(m.stock) }));
-        localStorage.setItem(KEY_M, JSON.stringify(materials));
-      }
-    }
-
-    if (resLoans.ok) {
-      const loans = await resLoans.json();
-      activeLoans = loans.map(l => ({ id: l.id, materialId: l.material_id, materialName: l.material_name, unit: l.unit, qty: Number(l.qty), person: l.person, location: l.location, date: l.date, obs: l.obs }));
-      localStorage.setItem(KEY_L, JSON.stringify(activeLoans));
-    }
-
-    if (resHist.ok) {
-      const hist = await resHist.json();
-      history = hist.map(h => ({ id: h.id, date: h.date, type: h.type, moduleType: h.module_type, material: h.material, qty: h.qty, person: h.person, ref: h.ref, obs: h.obs }));
-      localStorage.setItem(KEY_H, JSON.stringify(history));
-    }
-
-    updateHubStats();
-    if (currentModule) renderModule();
-  } catch (err) {
-    console.warn('Operando com cache local.');
+// ESCUTA EM TEMPO REAL NO FIREBASE
+dbFirestore.collection('almoxarifado').doc('dados_eletrica').onSnapshot((doc) => {
+  if (doc.exists) {
+    const data = doc.data() || {};
+    materials = data.materials || [];
+    history = data.history || [];
+    activeLoans = data.activeLoans || [];
+  } else {
+    save();
   }
+  updateHubStats();
+  if (currentModule) renderModule();
+}, (error) => {
+  console.error("Erro na sincronização Firebase:", error);
+});
+
+function save() {
+  dbFirestore.collection('almoxarifado').doc('dados_eletrica').set({
+    materials,
+    history,
+    activeLoans
+  });
 }
 
 function checkAuth() {
@@ -614,31 +604,6 @@ function checkEnter(e) {
   if (e.key === 'Enter') handleLogin();
 }
 
-async function save() {
-  localStorage.setItem(KEY_M, JSON.stringify(materials));
-  localStorage.setItem(KEY_H, JSON.stringify(history));
-  localStorage.setItem(KEY_L, JSON.stringify(activeLoans));
-  updateHubStats();
-  if (currentModule) renderModule();
-
-  try {
-    if (materials.length > 0) {
-      const payloadMats = materials.map(m => ({ id: m.id, name: m.name, type: m.type, category: m.category, unit: m.unit, min: m.min, stock: m.stock }));
-      fetch(`${API_URL}/materials`, { method: 'POST', headers: { ...headers, 'Prefer': 'resolution=merge-duplicates' }, body: JSON.stringify(payloadMats) });
-    }
-    if (activeLoans.length > 0) {
-      const payloadLoans = activeLoans.map(l => ({ id: l.id, material_id: l.materialId, material_name: l.materialName, unit: l.unit, qty: l.qty, person: l.person, location: l.location, date: l.date, obs: l.obs }));
-      fetch(`${API_URL}/active_loans`, { method: 'POST', headers: { ...headers, 'Prefer': 'resolution=merge-duplicates' }, body: JSON.stringify(payloadLoans) });
-    }
-    if (history.length > 0) {
-      const payloadHist = history.map(h => ({ id: h.id, date: h.date, type: h.type, module_type: h.moduleType, material: h.material, qty: h.qty, person: h.person, ref: h.ref, obs: h.obs }));
-      fetch(`${API_URL}/history`, { method: 'POST', headers: { ...headers, 'Prefer': 'resolution=merge-duplicates' }, body: JSON.stringify(payloadHist) });
-    }
-  } catch (err) {
-    console.warn('Erro na gravação remota.');
-  }
-}
-
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
 function todayISO() { return new Date().toISOString().slice(0, 10); }
 function fmtDate(v) { return new Date(v).toLocaleString('pt-BR'); }
@@ -652,13 +617,7 @@ function toast(msg) {
 
 function esc(s) {
   return String(s ?? '').replace(/[&<>"']/g, function(m) {
-    return {
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      '"': '&quot;',
-      "'": '&#039;'
-    }[m];
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
   });
 }
 
@@ -949,8 +908,6 @@ function returnLoan(loanId) {
     obs: 'Ferramenta devolvida ao quarto'
   });
 
-  fetch(`${API_URL}/active_loans?id=eq.${loanId}`, { method: 'DELETE', headers });
-
   activeLoans.splice(index, 1);
   save();
   toast('Devolução registrada com sucesso!');
@@ -959,8 +916,6 @@ function returnLoan(loanId) {
 function deleteMaterial(id) {
   const m = materials.find(x => x.id === id);
   if (!confirm(`Remover "${m.name}" do cadastro?`)) return;
-
-  fetch(`${API_URL}/materials?id=eq.${id}`, { method: 'DELETE', headers });
 
   materials = materials.filter(x => x.id !== id);
   save();
@@ -1117,10 +1072,9 @@ function exportCSV() {
   a.click();
 }
 
-// Inicialização Estável
+// Inicialização
 checkAuth();
 openHub();
-syncWithCloud();
 </script>
 </body>
 </html>
