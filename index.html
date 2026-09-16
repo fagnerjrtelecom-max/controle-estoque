@@ -844,7 +844,7 @@ function openSignatureModal() {
   if (!signaturePad) {
     signaturePad = new SignaturePad(canvas, {
       backgroundColor: 'rgb(248, 250, 252)',
-      penColor: 'rgb(0, 41, 255)'
+      penColor: 'rgb(0, 0, 0)'
     });
   } else {
     signaturePad.clear();
@@ -968,7 +968,7 @@ function generatePDFTerm(person, materialName, qty, location, dateIso, signature
   doc.text(String(person), 105, 201, { align: 'center' });
   doc.setFontSize(8);
   doc.setTextColor(100, 116, 139);
-  doc.text('Documento assinado digitalmente no tablet corporativo da JR Telecom.', 105, 207, { align: 'center' });
+  doc.text('Documento assinado digitalmente.', 105, 207, { align: 'center' });
 
   // Lógica Híbrida: Abre em nova aba para WebViews/Apps e faz o download direto no Navegador
   try {
