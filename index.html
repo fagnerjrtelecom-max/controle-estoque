@@ -5,18 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Almoxarifado Elétrica — Cloud App</title>
 
-<!-- Configurações PWA Embutidas -->
 <meta name="theme-color" content="#000ADC">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
 
-<!-- Fonte Inter e Ícones Lucide -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lucide@latest"></script>
 
-<!-- Bibliotecas para Assinatura Touch e Gerador de PDF -->
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
@@ -231,7 +229,6 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
 </head>
 <body class="theme-hub">
 
-<!-- LOGIN -->
 <div class="login-screen" id="loginScreen">
   <div class="login-container">
     <div class="login-banner">
@@ -282,7 +279,6 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
 
 <div class="app-container">
 
-  <!-- HUB INICIAL -->
   <div id="hubSection">
     <div class="hub-header">
       <h2>Painel Principal de Gestão</h2>
@@ -328,7 +324,6 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
     </div>
   </div>
 
-  <!-- MÓDULOS INTERNOS -->
   <div id="moduleSection" style="display:none">
     <div class="module-bar">
       <button class="btn-back" onclick="openHub()"><i data-lucide="arrow-left"></i> Voltar ao Painel Principal</button>
@@ -337,7 +332,6 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
 
     <nav class="desktop-tabs" id="moduleNav"></nav>
 
-    <!-- ABA Estoque -->
     <div id="modDashboard" class="section active">
       <div class="panel">
         <h3 id="dashTitleText"><i data-lucide="layers"></i> Itens Disponíveis</h3>
@@ -353,7 +347,6 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
       </div>
     </div>
 
-    <!-- ABA Empréstimos -->
     <div id="modLoans" class="section">
       <div class="panel">
         <h3><i data-lucide="handshake"></i> Registrar Empréstimo de Ferramenta</h3>
@@ -405,7 +398,6 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
       </div>
     </div>
 
-    <!-- ABA Saída Definitiva -->
     <div id="modExit" class="section">
       <div class="panel">
         <h3><i data-lucide="arrow-up-circle"></i> Registrar Saída Definitiva (Uso / Consumo)</h3>
@@ -437,7 +429,6 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
       </div>
     </div>
 
-    <!-- ABA Entrada -->
     <div id="modEntry" class="section">
       <div class="panel">
         <h3><i data-lucide="arrow-down-circle"></i> Receber Item (Veio do Almoxarifado Central)</h3>
@@ -465,7 +456,6 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
       </div>
     </div>
 
-    <!-- ABA Cadastro -->
     <div id="modCad" class="section">
       <div class="panel">
         <h3 id="cadFormTitle"><i data-lucide="plus-square"></i> Cadastrar Item</h3>
@@ -486,7 +476,6 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
       </div>
     </div>
 
-    <!-- ABA Histórico -->
     <div id="modHistory" class="section">
       <div class="panel">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px">
@@ -516,7 +505,6 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
   </div>
 </div>
 
-<!-- MODAL DE EDIÇÃO -->
 <div class="modal-overlay" id="editModal">
   <div class="modal-card">
     <div class="modal-header">
@@ -531,7 +519,6 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
   </div>
 </div>
 
-<!-- MODAL DE ASSINATURA TOUCH PAD -->
 <div class="modal-overlay" id="sigModal">
   <div class="modal-card">
     <div class="modal-header">
@@ -558,7 +545,6 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
 
 <div class="toast" id="toast"></div>
 
-<!-- SDKs do Firebase Compatível -->
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
@@ -655,7 +641,7 @@ function toast(msg) {
 
 function esc(s) {
   return String(s ?? '').replace(/[&<>"']/g, function(m) {
-    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
+    return { '&': '&', '<': '<', '>': '>', '"': '"', "'": '\'' }[m];
   });
 }
 
@@ -928,7 +914,7 @@ function registerLoan(signatureBase64) {
   toast('Empréstimo registrado e Termo em PDF gerado!');
 }
 
-/* GERADOR DE TERMO EM PDF (JSPDF) */
+/* GERADOR DE TERMO EM PDF (JSPDF) ADAPTADO PARA WEBVIEW */
 function generatePDFTerm(person, materialName, qty, location, dateIso, signatureImg) {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
@@ -984,8 +970,18 @@ function generatePDFTerm(person, materialName, qty, location, dateIso, signature
   doc.setTextColor(100, 116, 139);
   doc.text('Documento assinado digitalmente no tablet corporativo da JR Telecom.', 105, 207, { align: 'center' });
 
-  // Download do PDF
-  doc.save(`Termo_${person.replace(/\s+/g, '_')}_${todayISO()}.pdf`);
+  // Lógica Híbrida: Abre em nova aba para WebViews/Apps e faz o download direto no Navegador
+  try {
+    const pdfDataUri = doc.output('datauristring');
+    const newTab = window.open();
+    if (newTab) {
+      newTab.document.write(`<iframe width='100%' height='100%' src='${pdfDataUri}'></iframe>`);
+    } else {
+      doc.save(`Termo_${person.replace(/\s+/g, '_')}_${todayISO()}.pdf`);
+    }
+  } catch (err) {
+    doc.save(`Termo_${person.replace(/\s+/g, '_')}_${todayISO()}.pdf`);
+  }
 }
 
 function printTermFromHistory(histId) {
@@ -1237,6 +1233,11 @@ function exportCSV() {
   a.href = URL.createObjectURL(blob);
   a.download = `relatorio_${currentModule.toLowerCase()}_${todayISO()}.csv`;
   a.click();
+}
+
+// Registro do Service Worker para Validação no PWABuilder
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW Error:', err));
 }
 
 // Inicialização
