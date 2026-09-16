@@ -1,22 +1,17 @@
 {
-  "name": "EletroStock Pro",
-  "short_name": "EletroStock",
-  "description": "Gestão de Almoxarifado e Ferramentas da Elétrica",
+  "name": "Almoxarifado Elétrica JR Telecom",
+  "short_name": "Almoxarifado",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#060b26",
   "theme_color": "#000ADC",
-  "orientation": "landscape-primary",
+  "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "https://cdn-icons-png.flaticon.com/512/2983/2983063.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "https://cdn-icons-png.flaticon.com/512/2983/2983063.png",
+      "src": "https://lh3.googleusercontent.com/d/1W22GkelvWyfQjvKoJxYphvopSk-tDRc6",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
