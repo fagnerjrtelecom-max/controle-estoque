@@ -5,16 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Almoxarifado Elétrica — Cloud App</title>
 
+<!-- Configurações PWA Embutidas -->
 <meta name="theme-color" content="#000ADC">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.json">
 
+<!-- Fonte Inter e Ícones Lucide -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lucide@latest"></script>
 
+<!-- Bibliotecas para Assinatura Touch e Gerador de PDF -->
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
@@ -549,7 +552,7 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
 <script>
-// CONFIGURAÇÃO DO FIREBASE (Mesmo Projeto do Sistema de Chaves)
+// CONFIGURAÇÃO DO FIREBASE
 const firebaseConfig = {
   apiKey: "AIzaSyC24cBsTKfs57YYsE_gGra7mlE5qnrhezg",
   authDomain: "chaves-jrtelecom.firebaseapp.com",
@@ -914,80 +917,80 @@ function registerLoan(signatureBase64) {
   toast('Empréstimo registrado e Termo em PDF gerado!');
 }
 
-/* GERADOR DE TERMO EM PDF - LOGO OFICIAL JR TELECOM */
+/* GERADOR DE TERMO EM PDF COM LOGO REAL DO GOOGLE DRIVE */
 function generatePDFTerm(person, materialName, qty, location, dateIso, signatureImg) {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
 
-  // 1. CARREGAMENTO DO LOGO OFICIAL DA JR TELECOM
-  const logoUrl = 'https://lh3.googleusercontent.com/d/1W22GkelvWyfQjvKoJxYphvopSk-tDRc6';
-  
+  // URL Direta de Download da Imagem do Logo no Google Drive
+  const logoUrl = 'https://lh3.googleusercontent.com/d/1nlh8ikr7Wm4TFmCIurptoGHx7kqtUs6z';
+
   const imgLogo = new Image();
   imgLogo.crossOrigin = 'Anonymous';
   imgLogo.src = logoUrl;
 
   imgLogo.onload = function() {
-    renderPDFContent(imgLogo);
-  };
-  
-  imgLogo.onerror = function() {
-    renderPDFContent(null);
+    renderPDF(imgLogo);
   };
 
-  function renderPDFContent(loadedLogo) {
-    // Renderiza a imagem real do Logo JR TELECOM (Esquerda)
+  imgLogo.onerror = function() {
+    renderPDF(null);
+  };
+
+  function renderPDF(loadedLogo) {
+    // 1. CABEÇALHO: LOGO DA JR TELECOM E TÍTULO
     if (loadedLogo) {
-      doc.addImage(loadedLogo, 'PNG', 15, 10, 45, 16);
+      doc.addImage(loadedLogo, 'PNG', 15, 8, 55, 18);
     } else {
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(16);
       doc.setTextColor(0, 10, 220);
-      doc.text('JR TELECOM', 15, 20);
+      doc.text('JR TELECOM ®', 15, 20);
     }
 
-    // Título Central
-    doc.setFontSize(13);
+    // Título Centralizado
+    doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(0, 10, 220);
-    doc.text('TERMO DE RESPONSABILIDADE', 110, 20);
+    doc.text('TERMO DE RESPONSABILIDADE', 125, 20);
 
-    // Linha Divisória do Cabeçalho
+    // Linha Divisória Superior
     doc.setDrawColor(219, 227, 238);
     doc.setLineWidth(0.5);
-    doc.line(15, 30, 195, 30);
+    doc.line(15, 29, 195, 29);
 
     // 2. SEÇÃO: DADOS DO RESPONSÁVEL
     doc.setFontSize(10);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(0, 10, 220);
-    doc.text('DADOS DO RESPONSÁVEL', 15, 38);
+    doc.text('DADOS DO RESPONSÁVEL', 15, 37);
 
     // Box Cinza dos Dados
     doc.setFillColor(248, 250, 252);
     doc.setDrawColor(220, 226, 235);
-    doc.roundedRect(15, 42, 180, 24, 2, 2, 'FD');
+    doc.roundedRect(15, 41, 180, 24, 2, 2, 'FD');
 
     doc.setFontSize(7);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(100, 116, 139);
-    doc.text('NOME COMPLETO DO COLABORADOR', 20, 48);
-    doc.text('LOCAL / SERVIÇO DA OBRA', 110, 48);
+    doc.text('NOME COMPLETO DO COLABORADOR', 20, 47);
+    doc.text('LOCAL / SERVIÇO DA OBRA', 110, 47);
 
     doc.setFontSize(9.5);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(12, 21, 42);
-    doc.text(String(person).toUpperCase(), 20, 55);
-    doc.text(String(location || 'NÃO INFORMADO').toUpperCase(), 110, 55);
+    doc.text(String(person).toUpperCase(), 20, 54);
+    doc.text(String(location || 'NÃO INFORMADO').toUpperCase(), 110, 54);
 
     doc.setFontSize(7);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(100, 116, 139);
-    doc.text('DATA E HORA DO REGISTRO', 20, 61);
+    doc.text('DATA E HORA DO REGISTRO', 20, 60);
 
     doc.setFontSize(8.5);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(12, 21, 42);
-    doc.text(fmtDate(dateIso), 62, 61);
+    doc.text(fmtDate(dateIso), 62, 60);
 
     // 3. TERMO DE COMPROMISSO (TEXTO RESUMIDO)
     doc.setFontSize(8.5);
@@ -997,10 +1000,10 @@ function generatePDFTerm(person, materialName, qty, location, dateIso, signature
     const shortTermText = `Declaramos que o colaborador abaixo especificado recebeu em perfeito estado de conservação e funcionamento o(s) equipamento(s) e/ou ferramenta(s) descritos neste termo, comprometendo-se a utilizá-los exclusivamente em serviço e devolvê-los nas mesmas condições.`;
     
     const splitText = doc.splitTextToSize(shortTermText, 180);
-    doc.text(splitText, 15, 73);
+    doc.text(splitText, 15, 72);
 
     // 4. SEÇÃO: TABELA DE MATERIAIS / FERRAMENTAS
-    let tableY = 90;
+    let tableY = 89;
     doc.setFontSize(10);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(0, 10, 220);
