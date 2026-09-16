@@ -914,162 +914,167 @@ function registerLoan(signatureBase64) {
   toast('Empréstimo registrado e Termo em PDF gerado!');
 }
 
-/* GERADOR DE TERMO EM PDF - NOVO LAYOUT MODERNO JR TELECOM */
+/* GERADOR DE TERMO EM PDF - LOGO OFICIAL JR TELECOM */
 function generatePDFTerm(person, materialName, qty, location, dateIso, signatureImg) {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
 
-  const termNum = 'TERMO #' + Math.floor(100000 + Math.random() * 900000);
-
-  // 1. CABEÇALHO COM LOGO E BADGE
-  // Logo Vetorial
-  doc.setDrawColor(0, 10, 220);
-  doc.setLineWidth(1.2);
-  doc.circle(20, 18, 7, 'S');
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(11);
-  doc.setTextColor(0, 10, 220);
-  doc.text('JR', 16.5, 21.5);
-
-  doc.setFontSize(16);
-  doc.text('JR TELECOM', 30, 20);
-
-  // Título Central
-  doc.setFontSize(13);
-  doc.setTextColor(0, 10, 220);
-  doc.text('TERMO DE RESPONSABILIDADE', 82, 20);
-
-  // Badge do Número do Termo
-  doc.setFillColor(0, 10, 220);
-  doc.roundedRect(155, 12, 40, 10, 2, 2, 'F');
-  doc.setTextColor(255, 255, 255);
-  doc.setFontSize(9);
-  doc.setFont('helvetica', 'bold');
-  doc.text(termNum, 175, 18.5, { align: 'center' });
-
-  // Linha Divisória
-  doc.setDrawColor(219, 227, 238);
-  doc.setLineWidth(0.5);
-  doc.line(15, 28, 195, 28);
-
-  // 2. SEÇÃO: DADOS DO RESPONSÁVEL
-  doc.setFontSize(10);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(0, 10, 220);
-  doc.text('DADOS DO RESPONSÁVEL', 15, 36);
-
-  // Box Cinza dos Dados
-  doc.setFillColor(248, 250, 252);
-  doc.setDrawColor(220, 226, 235);
-  doc.roundedRect(15, 40, 180, 24, 2, 2, 'FD');
-
-  doc.setFontSize(7);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(100, 116, 139);
-  doc.text('NOME COMPLETO DO COLABORADOR', 20, 46);
-  doc.text('LOCAL / SERVIÇO DA OBRA', 110, 46);
-
-  doc.setFontSize(9.5);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(12, 21, 42);
-  doc.text(String(person).toUpperCase(), 20, 53);
-  doc.text(String(location || 'NÃO INFORMADO').toUpperCase(), 110, 53);
-
-  doc.setFontSize(7);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(100, 116, 139);
-  doc.text('DATA E HORA DO REGISTRO', 20, 59);
-
-  doc.setFontSize(8.5);
-  doc.setFont('helvetica', 'normal');
-  doc.setTextColor(12, 21, 42);
-  doc.text(fmtDate(dateIso), 62, 59);
-
-  // 3. TERMO DE COMPROMISSO (TEXTO RESUMIDO)
-  doc.setFontSize(8.5);
-  doc.setFont('helvetica', 'normal');
-  doc.setTextColor(50, 60, 75);
-
-  const shortTermText = `Declaramos que o colaborador abaixo especificado recebeu em perfeito estado de conservação e funcionamento o(s) equipamento(s) e/ou ferramenta(s) descritos neste termo, comprometendo-se a utilizá-los exclusivamente em serviço e devolvê-los nas mesmas condições.`;
+  // 1. CARREGAMENTO DO LOGO OFICIAL DA JR TELECOM
+  const logoUrl = 'https://lh3.googleusercontent.com/d/1W22GkelvWyfQjvKoJxYphvopSk-tDRc6';
   
-  const splitText = doc.splitTextToSize(shortTermText, 180);
-  doc.text(splitText, 15, 71);
+  const imgLogo = new Image();
+  imgLogo.crossOrigin = 'Anonymous';
+  imgLogo.src = logoUrl;
 
-  // 4. SEÇÃO: TABELA DE MATERIAIS / FERRAMENTAS
-  let tableY = 88;
-  doc.setFontSize(10);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(0, 10, 220);
-  doc.text('RELAÇÃO DE MATERIAIS / EQUIPAMENTOS RECEBIDOS', 15, tableY);
+  imgLogo.onload = function() {
+    renderPDFContent(imgLogo);
+  };
+  
+  imgLogo.onerror = function() {
+    renderPDFContent(null);
+  };
 
-  tableY += 4;
-  // Cabeçalho da Tabela
-  doc.setFillColor(0, 10, 220);
-  doc.rect(15, tableY, 180, 8, 'F');
-
-  doc.setFontSize(8);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(255, 255, 255);
-  doc.text('QTD.', 22, tableY + 5.5, { align: 'center' });
-  doc.text('MATERIAL / FERRAMENTA', 32, tableY + 5.5);
-  doc.text('ESTADO', 150, tableY + 5.5);
-  doc.text('CONFERIDO', 180, tableY + 5.5, { align: 'center' });
-
-  // Linha da Tabela
-  tableY += 8;
-  doc.setFillColor(255, 255, 255);
-  doc.setDrawColor(220, 226, 235);
-  doc.rect(15, tableY, 180, 10, 'FD');
-
-  doc.setFontSize(8.5);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(12, 21, 42);
-  doc.text(`${qty} UN`, 22, tableY + 6.5, { align: 'center' });
-  doc.text(String(materialName).toUpperCase(), 32, tableY + 6.5);
-
-  doc.setFont('helvetica', 'normal');
-  doc.text('BOM ESTADO', 150, tableY + 6.5);
-  doc.setTextColor(22, 163, 74);
-  doc.setFont('helvetica', 'bold');
-  doc.text('OK', 180, tableY + 6.5, { align: 'center' });
-
-  // 5. ASSINATURA DIGITAL (PRETA)
-  const sigBoxY = tableY + 20;
-
-  doc.setDrawColor(180, 190, 205);
-  doc.setLineWidth(0.3);
-  doc.roundedRect(55, sigBoxY, 100, 32, 2, 2, 'D');
-
-  if (signatureImg) {
-    doc.addImage(signatureImg, 'PNG', 65, sigBoxY + 2, 80, 28);
-  }
-
-  // Linha Preta de Assinatura
-  doc.setDrawColor(0, 0, 0);
-  doc.setLineWidth(0.5);
-  doc.line(50, sigBoxY + 38, 160, sigBoxY + 38);
-
-  doc.setFontSize(9);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(12, 21, 42);
-  doc.text(String(person).toUpperCase(), 105, sigBoxY + 43, { align: 'center' });
-
-  doc.setFontSize(7.5);
-  doc.setFont('helvetica', 'normal');
-  doc.setTextColor(100, 116, 139);
-  doc.text('Assinatura Digital do Colaborador Responsável', 105, sigBoxY + 47, { align: 'center' });
-
-  // Abertura / Download Híbrido
-  try {
-    const pdfDataUri = doc.output('datauristring');
-    const newTab = window.open();
-    if (newTab) {
-      newTab.document.write(`<iframe width='100%' height='100%' src='${pdfDataUri}'></iframe>`);
+  function renderPDFContent(loadedLogo) {
+    // Renderiza a imagem real do Logo JR TELECOM (Esquerda)
+    if (loadedLogo) {
+      doc.addImage(loadedLogo, 'PNG', 15, 10, 45, 16);
     } else {
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(16);
+      doc.setTextColor(0, 10, 220);
+      doc.text('JR TELECOM', 15, 20);
+    }
+
+    // Título Central
+    doc.setFontSize(13);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(0, 10, 220);
+    doc.text('TERMO DE RESPONSABILIDADE', 110, 20);
+
+    // Linha Divisória do Cabeçalho
+    doc.setDrawColor(219, 227, 238);
+    doc.setLineWidth(0.5);
+    doc.line(15, 30, 195, 30);
+
+    // 2. SEÇÃO: DADOS DO RESPONSÁVEL
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(0, 10, 220);
+    doc.text('DADOS DO RESPONSÁVEL', 15, 38);
+
+    // Box Cinza dos Dados
+    doc.setFillColor(248, 250, 252);
+    doc.setDrawColor(220, 226, 235);
+    doc.roundedRect(15, 42, 180, 24, 2, 2, 'FD');
+
+    doc.setFontSize(7);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(100, 116, 139);
+    doc.text('NOME COMPLETO DO COLABORADOR', 20, 48);
+    doc.text('LOCAL / SERVIÇO DA OBRA', 110, 48);
+
+    doc.setFontSize(9.5);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(12, 21, 42);
+    doc.text(String(person).toUpperCase(), 20, 55);
+    doc.text(String(location || 'NÃO INFORMADO').toUpperCase(), 110, 55);
+
+    doc.setFontSize(7);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(100, 116, 139);
+    doc.text('DATA E HORA DO REGISTRO', 20, 61);
+
+    doc.setFontSize(8.5);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(12, 21, 42);
+    doc.text(fmtDate(dateIso), 62, 61);
+
+    // 3. TERMO DE COMPROMISSO (TEXTO RESUMIDO)
+    doc.setFontSize(8.5);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(50, 60, 75);
+
+    const shortTermText = `Declaramos que o colaborador abaixo especificado recebeu em perfeito estado de conservação e funcionamento o(s) equipamento(s) e/ou ferramenta(s) descritos neste termo, comprometendo-se a utilizá-los exclusivamente em serviço e devolvê-los nas mesmas condições.`;
+    
+    const splitText = doc.splitTextToSize(shortTermText, 180);
+    doc.text(splitText, 15, 73);
+
+    // 4. SEÇÃO: TABELA DE MATERIAIS / FERRAMENTAS
+    let tableY = 90;
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(0, 10, 220);
+    doc.text('RELAÇÃO DE MATERIAIS / EQUIPAMENTOS RECEBIDOS', 15, tableY);
+
+    tableY += 4;
+    // Cabeçalho da Tabela
+    doc.setFillColor(0, 10, 220);
+    doc.rect(15, tableY, 180, 8, 'F');
+
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(255, 255, 255);
+    doc.text('QTD.', 22, tableY + 5.5, { align: 'center' });
+    doc.text('MATERIAL / FERRAMENTA', 32, tableY + 5.5);
+    doc.text('ESTADO', 150, tableY + 5.5);
+    doc.text('CONFERIDO', 180, tableY + 5.5, { align: 'center' });
+
+    // Linha da Tabela
+    tableY += 8;
+    doc.setFillColor(255, 255, 255);
+    doc.setDrawColor(220, 226, 235);
+    doc.rect(15, tableY, 180, 10, 'FD');
+
+    doc.setFontSize(8.5);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(12, 21, 42);
+    doc.text(`${qty} UN`, 22, tableY + 6.5, { align: 'center' });
+    doc.text(String(materialName).toUpperCase(), 32, tableY + 6.5);
+
+    doc.setFont('helvetica', 'normal');
+    doc.text('BOM ESTADO', 150, tableY + 6.5);
+    doc.setTextColor(22, 163, 74);
+    doc.setFont('helvetica', 'bold');
+    doc.text('OK', 180, tableY + 6.5, { align: 'center' });
+
+    // 5. ASSINATURA DIGITAL (PRETA)
+    const sigBoxY = tableY + 20;
+
+    doc.setDrawColor(180, 190, 205);
+    doc.setLineWidth(0.3);
+    doc.roundedRect(55, sigBoxY, 100, 32, 2, 2, 'D');
+
+    if (signatureImg) {
+      doc.addImage(signatureImg, 'PNG', 65, sigBoxY + 2, 80, 28);
+    }
+
+    // Linha Preta de Assinatura
+    doc.setDrawColor(0, 0, 0);
+    doc.setLineWidth(0.5);
+    doc.line(50, sigBoxY + 38, 160, sigBoxY + 38);
+
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(12, 21, 42);
+    doc.text(String(person).toUpperCase(), 105, sigBoxY + 43, { align: 'center' });
+
+    doc.setFontSize(7.5);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(100, 116, 139);
+    doc.text('Assinatura Digital do Colaborador Responsável', 105, sigBoxY + 47, { align: 'center' });
+
+    // Abertura / Download
+    try {
+      const pdfDataUri = doc.output('datauristring');
+      const newTab = window.open();
+      if (newTab) {
+        newTab.document.write(`<iframe width='100%' height='100%' src='${pdfDataUri}'></iframe>`);
+      } else {
+        doc.save(`Termo_${person.replace(/\s+/g, '_')}_${todayISO()}.pdf`);
+      }
+    } catch (err) {
       doc.save(`Termo_${person.replace(/\s+/g, '_')}_${todayISO()}.pdf`);
     }
-  } catch (err) {
-    doc.save(`Termo_${person.replace(/\s+/g, '_')}_${todayISO()}.pdf`);
   }
 }
 
