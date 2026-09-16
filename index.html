@@ -5,11 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Almoxarifado Elétrica — Cloud App</title>
 
+<!-- Configurações PWA Embutidas -->
 <meta name="theme-color" content="#000ADC">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIkVsZXRyb1N0b2NrIFBybyIsCiAgInNob3J0X25hbWUiOiAiRWxldHJvU3RvY2siLAogICJkZXNjcmlwdGlvbiI6ICJHZXN0YW8gZGUgQWxtb3hhcmlmYWRvIGUgRmVycmFtZW50YXMgZGEgRWxldHJpY2EiLAogICJzdGFydF91cmwiOiAiLi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiMwNjBiMjYiLAogICJ0aGVtZV9jb2xvciI6ICIjMDAwQURDIiwKICAiaWNvbnMiOiBbCiAgICB7CiAgICAgICJzcmMiOiAiaHR0cHM6Ly9jZG4taWNvbnMtcG5nLmZsYXRpY29uLmNvbS81MTIvMjk43LzI5ODMwNjMucG5nIiwKICAgICAgInNpemVzIjogIjE5MngxOTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9wbmciCiAgICB9LAogICAgewogICAgICAic3JjIjogImh0dHBzOi8vY2RuLWljb25zLXBuZy5mbGF0aWNvbi5jb20vNTEyLzI5ODMvMjk4MzA2My5wbmciLAogICAgICAic2l6ZXMiOiAiNTEyeDUxMiIsCiAgICAgICJ0eXBlIjogImltYWdlL3BuZyIKICAgIH0KICBdCn0=">
 
+<!-- Fonte Inter e Ícones Lucide -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -221,6 +223,7 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
 </head>
 <body class="theme-hub">
 
+<!-- LOGIN -->
 <div class="login-screen" id="loginScreen">
   <div class="login-container">
     <div class="login-banner">
@@ -271,6 +274,7 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
 
 <div class="app-container">
 
+  <!-- HUB INICIAL -->
   <div id="hubSection">
     <div class="hub-header">
       <h2>Painel Principal de Gestão</h2>
@@ -316,6 +320,7 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
     </div>
   </div>
 
+  <!-- MÓDULOS INTERNOS -->
   <div id="moduleSection" style="display:none">
     <div class="module-bar">
       <button class="btn-back" onclick="openHub()"><i data-lucide="arrow-left"></i> Voltar ao Painel Principal</button>
@@ -324,6 +329,7 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
 
     <nav class="desktop-tabs" id="moduleNav"></nav>
 
+    <!-- ABA Estoque -->
     <div id="modDashboard" class="section active">
       <div class="panel">
         <h3 id="dashTitleText"><i data-lucide="layers"></i> Itens Disponíveis</h3>
@@ -339,6 +345,7 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
       </div>
     </div>
 
+    <!-- ABA Empréstimos -->
     <div id="modLoans" class="section">
       <div class="panel">
         <h3><i data-lucide="handshake"></i> Registrar Empréstimo de Ferramenta</h3>
@@ -389,6 +396,7 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
       </div>
     </div>
 
+    <!-- ABA Saída Definitiva -->
     <div id="modExit" class="section">
       <div class="panel">
         <h3><i data-lucide="arrow-up-circle"></i> Registrar Saída Definitiva (Uso / Consumo)</h3>
@@ -420,6 +428,7 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
       </div>
     </div>
 
+    <!-- ABA Entrada -->
     <div id="modEntry" class="section">
       <div class="panel">
         <h3><i data-lucide="arrow-down-circle"></i> Receber Item (Veio do Almoxarifado Central)</h3>
@@ -447,6 +456,7 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
       </div>
     </div>
 
+    <!-- ABA Cadastro -->
     <div id="modCad" class="section">
       <div class="panel">
         <h3 id="cadFormTitle"><i data-lucide="plus-square"></i> Cadastrar Item</h3>
@@ -467,6 +477,7 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
       </div>
     </div>
 
+    <!-- ABA Histórico -->
     <div id="modHistory" class="section">
       <div class="panel">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px">
@@ -495,6 +506,7 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
   </div>
 </div>
 
+<!-- MODAL DE EDIÇÃO -->
 <div class="modal-overlay" id="editModal">
   <div class="modal-card">
     <div class="modal-header">
@@ -512,7 +524,7 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
 <div class="toast" id="toast"></div>
 
 <script>
-// CONEXÃO DIRETA COM SUPABASE VIA API REST (URL COMPLETA E CORRIGIDA)
+// CONEXÃO DIRETA COM SUPABASE VIA API REST
 const API_URL = 'https://mgrrjwllygzmvpjphgz.supabase.co/rest/v1';
 const API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ncnJqd2xseWpnem12anBqaGd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0OTgyMjQsImV4cCI6MjEwNTA3NDIyNH0.FDLOYihhXcCQIghmZ7Rahh5ODd8rP-jzjnunF29K-fo';
 
@@ -534,7 +546,6 @@ let activeLoans = JSON.parse(localStorage.getItem(KEY_L) || '[]');
 
 let currentModule = null;
 
-// Sincronização via Chamadas REST Diretas
 async function syncWithCloud() {
   try {
     const [resMats, resLoans, resHist] = await Promise.all([
@@ -640,9 +651,15 @@ function toast(msg) {
 }
 
 function esc(s) {
-  return String(s ?? '').replace(/[&<>"']/g, m => ({
-    '&': '&', '<': '<', '>': '>', '"': '"', "'": '''
-  }[m]));
+  return String(s ?? '').replace(/[&<>"']/g, function(m) {
+    return {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#039;'
+    }[m];
+  });
 }
 
 function openHub() {
@@ -1100,7 +1117,7 @@ function exportCSV() {
   a.click();
 }
 
-// Inicialização Estável e Sincronizada
+// Inicialização Estável
 checkAuth();
 openHub();
 syncWithCloud();
