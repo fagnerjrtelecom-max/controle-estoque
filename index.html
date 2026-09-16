@@ -114,4 +114,996 @@ body {
   transition: all 0.2s;
 }
 
-.login-form input:
+.login-form input:focus {
+  border-color: var(--azul-claro);
+  box-shadow: 0 0 0 3px rgba(0, 185, 255, 0.15);
+}
+
+.btn-login {
+  background: var(--azul-escuro); color: white; border: 0; padding: 13px; border-radius: var(--radius-md);
+  font-weight: 700; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 8px; transition: all 0.2s;
+}
+.btn-login:hover { background: var(--azul-claro); box-shadow: 0 6px 18px rgba(0, 185, 255, 0.3); }
+
+@media (max-width: 768px) {
+  .login-container { flex-direction: column; }
+  .login-banner { padding: 24px; min-height: 200px; }
+  .login-box { padding: 28px; }
+  .banner-gif { max-height: 140px; }
+}
+
+header { background: var(--theme-color); color: white; padding: 14px 28px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); transition: background 0.3s; }
+.window-title { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+.window-title h1 { margin: 0; font-size: 18px; font-weight: 800; letter-spacing: -0.3px; display: flex; align-items: center; gap: 8px; }
+.window-title span { background: rgba(255, 255, 255, 0.2); font-size: 11px; padding: 3px 8px; border-radius: 20px; text-transform: uppercase; color: #fff; font-weight: 700; }
+.header-actions { display: flex; gap: 10px; align-items: center; }
+
+.app-container { max-width: 1400px; width: 100%; margin: auto; padding: 24px; flex: 1; }
+
+.hub-header h2 { margin: 0 0 6px 0; font-size: 26px; font-weight: 800; color: var(--azul-claro); }
+.hub-header p { margin: 0; color: var(--text-muted); font-size: 14px; }
+.hub-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 24px; margin-top: 20px; }
+
+.hub-card {
+  background: var(--surface); border: 2px solid var(--border); border-radius: var(--radius-lg); padding: 32px; cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; justify-content: space-between;
+  box-shadow: var(--shadow-desktop); position: relative; overflow: hidden;
+}
+.hub-card.mat-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 6px; background: var(--azul-escuro); }
+.hub-card.tool-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 6px; background: var(--laranja); }
+.hub-card.mat-card:hover { transform: translateY(-5px); border-color: var(--azul-escuro); box-shadow: 0 16px 35px rgba(0, 10, 220, 0.15); }
+.hub-card.tool-card:hover { transform: translateY(-5px); border-color: var(--laranja); box-shadow: 0 16px 35px rgba(255, 108, 0, 0.15); }
+
+.mat-card .hub-icon { width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; background: rgba(0, 10, 220, 0.1); color: var(--azul-escuro); }
+.tool-card .hub-icon { width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; background: rgba(255, 108, 0, 0.1); color: var(--laranja); }
+
+.hub-card h3 { margin: 0 0 10px 0; font-size: 22px; font-weight: 700; }
+.hub-card p { margin: 0 0 24px 0; color: var(--text-muted); font-size: 14px; line-height: 1.5; }
+
+.hub-stats { display: flex; gap: 24px; border-top: 1px solid var(--border); padding-top: 18px; }
+.hub-stat-val { font-size: 24px; font-weight: 800; color: var(--text-main); }
+.hub-stat-lbl { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
+
+.module-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: var(--surface); padding: 16px 20px; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow-desktop); }
+.btn-back { background: var(--bg-app); color: var(--theme-color); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 8px 16px; font-weight: 700; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+.btn-back:hover { background: var(--theme-color); color: white; }
+
+nav.desktop-tabs { display: flex; gap: 6px; margin-bottom: 20px; background: var(--surface); padding: 6px; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow-desktop); }
+nav.desktop-tabs button { border: 0; background: transparent; color: var(--text-muted); padding: 10px 18px; border-radius: var(--radius-md); cursor: pointer; font-weight: 700; font-size: 13px; display: flex; align-items: center; gap: 8px; }
+nav.desktop-tabs button:hover { color: var(--theme-color); background: rgba(0, 0, 0, 0.04); }
+nav.desktop-tabs button.active { background: var(--theme-color); color: white; }
+
+.section { display: none; }
+.section.active { display: block; }
+
+.panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-desktop); margin-bottom: 20px; }
+.panel h3 { margin: 0 0 18px 0; font-size: 16px; font-weight: 700; color: var(--theme-color); display: flex; align-items: center; gap: 8px; }
+
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label { font-size: 12px; font-weight: 700; color: var(--theme-color); text-transform: uppercase; }
+
+input, select, textarea { width: 100%; padding: 11px 14px; border: 1px solid var(--border); border-radius: var(--radius-md); font: inherit; font-size: 14px; background: #fdfefe; }
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--theme-color); box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08); }
+textarea { resize: vertical; min-height: 70px; }
+
+.actions { display: flex; gap: 10px; margin-top: 18px; }
+.btn { border: 0; border-radius: var(--radius-md); padding: 10px 20px; cursor: pointer; font-weight: 700; font-size: 13px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; }
+.btn.primary { background: var(--theme-color); color: white; }
+.btn.primary:hover { background: var(--theme-hover); }
+.btn.success { background: var(--success); color: white; }
+.btn.danger { background: var(--danger); color: white; }
+.btn.secondary { background: #eef4fb; color: var(--text-main); border: 1px solid var(--border); }
+.btn.secondary:hover { background: #e2ecf8; }
+.btn.small { padding: 6px 12px; font-size: 12px; }
+
+.table-wrap { overflow-x: auto; border-radius: var(--radius-md); border: 1px solid var(--border); }
+table { width: 100%; border-collapse: collapse; min-width: 700px; }
+th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--border); font-size: 13px; }
+th { background: #f7fafc; color: var(--theme-color); font-weight: 700; text-transform: uppercase; font-size: 11px; }
+tr:hover { background: rgba(0, 0, 0, 0.02); }
+
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 800; }
+.ok { background: #e6f7ed; color: var(--success); }
+.low { background: #fde8e8; color: var(--danger); }
+.warn { background: #fff1e6; color: var(--laranja); }
+
+.search-bar { display: flex; gap: 10px; margin-bottom: 16px; max-width: 500px; }
+.empty { text-align: center; padding: 40px; color: var(--text-muted); }
+
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(12, 21, 42, 0.6); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 1000; }
+.modal-card { background: white; width: 100%; max-width: 550px; border-radius: var(--radius-lg); padding: 28px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); border: 1px solid var(--border); }
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 12px; }
+.modal-header h3 { margin: 0; font-size: 18px; color: var(--theme-color); font-weight: 800; }
+
+.toast { position: fixed; right: 24px; bottom: 24px; background: #0f172a; color: white; padding: 14px 22px; border-radius: var(--radius-md); display: none; z-index: 9999; font-size: 14px; font-weight: 600; box-shadow: 0 10px 25px rgba(0,0,0,0.2); border-left: 4px solid var(--theme-color); }
+</style>
+</head>
+<body class="theme-hub">
+
+<div class="login-screen" id="loginScreen">
+  <div class="login-container">
+    <div class="login-banner">
+      <div class="banner-brand"><i data-lucide="zap" size="20"></i> ELETROSTOCK PRO</div>
+      <div class="banner-gif-container">
+        <img src="https://lh3.googleusercontent.com/d/1qJQXDfDcs_rF16nQZX1NSOKLEtQ3aUL7" alt="Acesso Seguro" class="banner-gif">
+      </div>
+      <div class="banner-footer">
+        <h3>Acesso Seguro</h3>
+        <p>Controle inteligente de estoque e ferramentas do setor elétrico.</p>
+      </div>
+    </div>
+
+    <div class="login-box">
+      <div class="login-box-header">
+        <h2>Bem-vindo!</h2>
+        <p>Digite seus dados para acessar o sistema.</p>
+      </div>
+      <div class="login-form">
+        <div class="field">
+          <label>Usuário</label>
+          <input type="text" id="loginUser" placeholder="Digite seu usuário" onkeydown="checkEnter(event)">
+        </div>
+        <div class="field">
+          <label>Senha</label>
+          <input type="password" id="loginPass" placeholder="Digite sua senha" onkeydown="checkEnter(event)">
+        </div>
+        <button class="btn-login" onclick="handleLogin()">
+          <i data-lucide="log-in" size="18"></i> Entrar no Sistema
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<header>
+  <div class="window-title" onclick="openHub()">
+    <h1><i data-lucide="cpu"></i> ALMOXARIFADO ELÉTRICA</h1>
+    <span>Pro Cloud</span>
+  </div>
+  <div class="header-actions">
+    <button class="btn secondary small" onclick="exportData()"><i data-lucide="download"></i> Backup JSON</button>
+    <button class="btn secondary small" onclick="document.getElementById('importFile').click()"><i data-lucide="upload"></i> Restaurar</button>
+    <input type="file" id="importFile" style="display:none" accept=".json" onchange="importData(event)">
+    <button class="btn danger small" onclick="handleLogout()" title="Sair do Sistema"><i data-lucide="log-out"></i> Sair</button>
+  </div>
+</header>
+
+<div class="app-container">
+
+  <div id="hubSection">
+    <div class="hub-header">
+      <h2>Painel Principal de Gestão</h2>
+      <p>Selecione o setor que você deseja visualizar e gerenciar agora:</p>
+    </div>
+
+    <div class="hub-grid">
+      <div class="hub-card mat-card" onclick="openModule('MATERIAL')">
+        <div>
+          <div class="hub-icon"><i data-lucide="boxes" size="30"></i></div>
+          <h3>Materiais Consumíveis</h3>
+          <p>Itens consumidos continuamente durante as instalações e manutenções (cabos, fitas, conectores, lâmpadas...).</p>
+        </div>
+        <div class="hub-stats">
+          <div>
+            <div class="hub-stat-val" id="hubMatTotal">0</div>
+            <div class="hub-stat-lbl">Itens no Quarto</div>
+          </div>
+          <div>
+            <div class="hub-stat-val" id="hubMatLow" style="color:var(--danger)">0</div>
+            <div class="hub-stat-lbl">Repor Urgente</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hub-card tool-card" onclick="openModule('FERRAMENTA')">
+        <div>
+          <div class="hub-icon"><i data-lucide="wrench" size="30"></i></div>
+          <h3>Ferramentas e Equipamentos</h3>
+          <p>Controle de ferramentas de uso contínuo com módulo de empréstimo e devolução para colaboradores.</p>
+        </div>
+        <div class="hub-stats">
+          <div>
+            <div class="hub-stat-val" id="hubToolTotal">0</div>
+            <div class="hub-stat-lbl">Tipos de Ferramenta</div>
+          </div>
+          <div>
+            <div class="hub-stat-val" id="hubToolLoans" style="color:var(--laranja)">0</div>
+            <div class="hub-stat-lbl">Emprestadas</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="moduleSection" style="display:none">
+    <div class="module-bar">
+      <button class="btn-back" onclick="openHub()"><i data-lucide="arrow-left"></i> Voltar ao Painel Principal</button>
+      <h2 id="moduleTitle" style="margin:0; font-size:18px; color:var(--theme-color); font-weight:800;"> Módulo</h2>
+    </div>
+
+    <nav class="desktop-tabs" id="moduleNav"></nav>
+
+    <div id="modDashboard" class="section active">
+      <div class="panel">
+        <h3 id="dashTitleText"><i data-lucide="layers"></i> Itens Disponíveis</h3>
+        <div class="search-bar">
+          <input id="modSearch" placeholder="Pesquisar por nome ou categoria..." oninput="renderModule()">
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead id="dashTableHeader"></thead>
+            <tbody id="modTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="modLoans" class="section">
+      <div class="panel">
+        <h3><i data-lucide="handshake"></i> Registrar Empréstimo de Ferramenta</h3>
+        <div class="form-grid">
+          <div class="field">
+            <label>Colaborador Que Pegou</label>
+            <input id="loanPerson" placeholder="Ex.: João Silva (Eletricista)">
+          </div>
+          <div class="field">
+            <label>Ferramenta Emprestada</label>
+            <select id="loanMaterialSelect"></select>
+          </div>
+          <div class="field">
+            <label>Quantidade Retirada</label>
+            <input id="loanQty" type="number" min="1" value="1">
+          </div>
+          <div class="field">
+            <label>Local / Serviço da Obra</label>
+            <input id="loanLocation" placeholder="Ex.: Bloco C - QDF 02">
+          </div>
+        </div>
+        <div class="field" style="margin-top:12px">
+          <label>Observação</label>
+          <textarea id="loanObs" placeholder="Ex.: Retirou com maleta e acessórios completos"></textarea>
+        </div>
+        <div class="actions">
+          <button class="btn primary" onclick="registerLoan()"><i data-lucide="check"></i> Confirmar Empréstimo</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3><i data-lucide="clock"></i> Ferramentas Fora do Quarto (Aguardando Devolução)</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Data Retirada</th>
+                <th>Colaborador</th>
+                <th>Ferramenta</th>
+                <th>Qtd.</th>
+                <th>Local / Serviço</th>
+                <th>Ação de Baixa</th>
+              </tr>
+            </thead>
+            <tbody id="loansActiveTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="modExit" class="section">
+      <div class="panel">
+        <h3><i data-lucide="arrow-up-circle"></i> Registrar Saída Definitiva (Uso / Consumo)</h3>
+        <div class="form-grid">
+          <div class="field">
+            <label>Colaborador Que Retirou</label>
+            <input id="outPerson" placeholder="Ex.: Carlos">
+          </div>
+          <div class="field">
+            <label>Material Utilizado</label>
+            <select id="outMaterialSelect"></select>
+          </div>
+          <div class="field">
+            <label>Quantidade Usada</label>
+            <input id="outQty" type="number" min="0.01" step="0.01">
+          </div>
+          <div class="field">
+            <label>Local da Aplicação</label>
+            <input id="outLocation" placeholder="Ex.: Reforma da Sala 102">
+          </div>
+        </div>
+        <div class="field" style="margin-top:12px">
+          <label>Observação</label>
+          <textarea id="outObs" placeholder="Opcional"></textarea>
+        </div>
+        <div class="actions">
+          <button class="btn primary" onclick="registerExit()"><i data-lucide="check"></i> Confirmar Baixa no Estoque</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="modEntry" class="section">
+      <div class="panel">
+        <h3><i data-lucide="arrow-down-circle"></i> Receber Item (Veio do Almoxarifado Central)</h3>
+        <div class="form-grid">
+          <div class="field">
+            <label>Item Recebido</label>
+            <select id="inMaterialSelect"></select>
+          </div>
+          <div class="field">
+            <label>Quantidade Recebida</label>
+            <input id="inQty" type="number" min="0.01" step="0.01">
+          </div>
+          <div class="field">
+            <label>Nº do Pedido / Requisição</label>
+            <input id="inNF" placeholder="Ex.: REQ-552">
+          </div>
+        </div>
+        <div class="field" style="margin-top:12px">
+          <label>Observação</label>
+          <textarea id="inObs" placeholder="Ex.: Pedido enviado pelo almoxarifado"></textarea>
+        </div>
+        <div class="actions">
+          <button class="btn success" onclick="registerEntry()"><i data-lucide="check"></i> Dar Entrada no Estoque</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="modCad" class="section">
+      <div class="panel">
+        <h3 id="cadFormTitle"><i data-lucide="plus-square"></i> Cadastrar Item</h3>
+        <div class="form-grid" id="cadFormFields"></div>
+        <div class="actions">
+          <button class="btn primary" onclick="addMaterial()"><i data-lucide="check"></i> Salvar Cadastro</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Lista de Itens Cadastrados Neste Setor</h3>
+        <div class="table-wrap">
+          <table>
+            <thead id="cadTableHeader"></thead>
+            <tbody id="cadTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="modHistory" class="section">
+      <div class="panel">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px">
+          <h3><i data-lucide="history"></i> Relatório de Movimentações</h3>
+          <button class="btn secondary small" onclick="exportCSV()"><i data-lucide="file-spreadsheet"></i> Exportar CSV/Excel</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Data/Hora</th>
+                <th>Tipo Operação</th>
+                <th>Item</th>
+                <th>Qtd.</th>
+                <th>Colaborador / Origem</th>
+                <th>Local / Ref</th>
+                <th>Obs</th>
+              </tr>
+            </thead>
+            <tbody id="histTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="modal-overlay" id="editModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3 id="editModalTitle"><i data-lucide="edit-3"></i> Editar Dados</h3>
+      <button class="btn secondary small" onclick="closeEditModal()">✕ Cancelar</button>
+    </div>
+    <input type="hidden" id="editId">
+    <div class="form-grid" id="editModalFields" style="grid-template-columns: 1fr;"></div>
+    <div class="actions" style="margin-top:20px; justify-content: flex-end;">
+      <button class="btn primary" onclick="saveEditMaterial()"><i data-lucide="save"></i> Salvar Alterações</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// CONEXÃO DIRETA COM SUPABASE VIA API REST (URL COMPLETA E CORRIGIDA)
+const API_URL = 'https://mgrrjwllygzmvpjphgz.supabase.co/rest/v1';
+const API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ncnJqd2xseWpnem12anBqaGd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0OTgyMjQsImV4cCI6MjEwNTA3NDIyNH0.FDLOYihhXcCQIghmZ7Rahh5ODd8rP-jzjnunF29K-fo';
+
+const headers = {
+  'apikey': API_KEY,
+  'Authorization': 'Bearer ' + API_KEY,
+  'Content-Type': 'application/json',
+  'Prefer': 'return=representation'
+};
+
+const KEY_M = 'eletrica_itens_v10';
+const KEY_H = 'eletrica_hist_v10';
+const KEY_L = 'eletrica_loans_v10';
+const KEY_AUTH = 'eletrica_auth_v10';
+
+let materials = JSON.parse(localStorage.getItem(KEY_M) || '[]');
+let history = JSON.parse(localStorage.getItem(KEY_H) || '[]');
+let activeLoans = JSON.parse(localStorage.getItem(KEY_L) || '[]');
+
+let currentModule = null;
+
+// Sincronização via Chamadas REST Diretas
+async function syncWithCloud() {
+  try {
+    const [resMats, resLoans, resHist] = await Promise.all([
+      fetch(`${API_URL}/materials?select=*`, { headers }),
+      fetch(`${API_URL}/active_loans?select=*`, { headers }),
+      fetch(`${API_URL}/history?select=*`, { headers })
+    ]);
+
+    if (resMats.ok) {
+      const mats = await resMats.json();
+      if (mats && mats.length > 0) {
+        materials = mats.map(m => ({ id: m.id, name: m.name, type: m.type, category: m.category, unit: m.unit, min: Number(m.min), stock: Number(m.stock) }));
+        localStorage.setItem(KEY_M, JSON.stringify(materials));
+      }
+    }
+
+    if (resLoans.ok) {
+      const loans = await resLoans.json();
+      activeLoans = loans.map(l => ({ id: l.id, materialId: l.material_id, materialName: l.material_name, unit: l.unit, qty: Number(l.qty), person: l.person, location: l.location, date: l.date, obs: l.obs }));
+      localStorage.setItem(KEY_L, JSON.stringify(activeLoans));
+    }
+
+    if (resHist.ok) {
+      const hist = await resHist.json();
+      history = hist.map(h => ({ id: h.id, date: h.date, type: h.type, moduleType: h.module_type, material: h.material, qty: h.qty, person: h.person, ref: h.ref, obs: h.obs }));
+      localStorage.setItem(KEY_H, JSON.stringify(history));
+    }
+
+    updateHubStats();
+    if (currentModule) renderModule();
+  } catch (err) {
+    console.warn('Operando com cache local.');
+  }
+}
+
+function checkAuth() {
+  const isAuth = localStorage.getItem(KEY_AUTH);
+  if (isAuth === 'true') {
+    document.getElementById('loginScreen').style.display = 'none';
+  } else {
+    document.getElementById('loginScreen').style.display = 'flex';
+  }
+}
+
+function handleLogin() {
+  const user = document.getElementById('loginUser').value.trim();
+  const pass = document.getElementById('loginPass').value.trim();
+
+  if (user.toLowerCase() === 'fagner' && pass === 'jr123') {
+    localStorage.setItem(KEY_AUTH, 'true');
+    document.getElementById('loginScreen').style.display = 'none';
+    toast('Bem-vindo, Fagner!');
+  } else {
+    toast('Usuário ou senha incorretos!');
+  }
+}
+
+function handleLogout() {
+  localStorage.removeItem(KEY_AUTH);
+  document.getElementById('loginUser').value = '';
+  document.getElementById('loginPass').value = '';
+  checkAuth();
+}
+
+function checkEnter(e) {
+  if (e.key === 'Enter') handleLogin();
+}
+
+async function save() {
+  localStorage.setItem(KEY_M, JSON.stringify(materials));
+  localStorage.setItem(KEY_H, JSON.stringify(history));
+  localStorage.setItem(KEY_L, JSON.stringify(activeLoans));
+  updateHubStats();
+  if (currentModule) renderModule();
+
+  try {
+    if (materials.length > 0) {
+      const payloadMats = materials.map(m => ({ id: m.id, name: m.name, type: m.type, category: m.category, unit: m.unit, min: m.min, stock: m.stock }));
+      fetch(`${API_URL}/materials`, { method: 'POST', headers: { ...headers, 'Prefer': 'resolution=merge-duplicates' }, body: JSON.stringify(payloadMats) });
+    }
+    if (activeLoans.length > 0) {
+      const payloadLoans = activeLoans.map(l => ({ id: l.id, material_id: l.materialId, material_name: l.materialName, unit: l.unit, qty: l.qty, person: l.person, location: l.location, date: l.date, obs: l.obs }));
+      fetch(`${API_URL}/active_loans`, { method: 'POST', headers: { ...headers, 'Prefer': 'resolution=merge-duplicates' }, body: JSON.stringify(payloadLoans) });
+    }
+    if (history.length > 0) {
+      const payloadHist = history.map(h => ({ id: h.id, date: h.date, type: h.type, module_type: h.moduleType, material: h.material, qty: h.qty, person: h.person, ref: h.ref, obs: h.obs }));
+      fetch(`${API_URL}/history`, { method: 'POST', headers: { ...headers, 'Prefer': 'resolution=merge-duplicates' }, body: JSON.stringify(payloadHist) });
+    }
+  } catch (err) {
+    console.warn('Erro na gravação remota.');
+  }
+}
+
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+function todayISO() { return new Date().toISOString().slice(0, 10); }
+function fmtDate(v) { return new Date(v).toLocaleString('pt-BR'); }
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  setTimeout(() => t.style.display = 'none', 3000);
+}
+
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"']/g, m => ({
+    '&': '&', '<': '<', '>': '>', '"': '"', "'": '''
+  }[m]));
+}
+
+function openHub() {
+  currentModule = null;
+  document.body.className = 'theme-hub';
+  document.getElementById('hubSection').style.display = 'block';
+  document.getElementById('moduleSection').style.display = 'none';
+  updateHubStats();
+  lucide.createIcons();
+}
+
+function openModule(mod) {
+  currentModule = mod;
+  document.getElementById('hubSection').style.display = 'none';
+  document.getElementById('moduleSection').style.display = 'block';
+
+  const title = document.getElementById('moduleTitle');
+  const nav = document.getElementById('moduleNav');
+
+  if (mod === 'MATERIAL') {
+    document.body.className = 'theme-material';
+    title.innerHTML = '<i data-lucide="boxes"></i> MÓDULO: MATERIAIS CONSUMÍVEIS';
+    nav.innerHTML = `
+      <button class="active" onclick="switchTab('modDashboard', this)"><i data-lucide="layout-dashboard"></i> Estoque Atual</button>
+      <button onclick="switchTab('modExit', this)"><i data-lucide="minus-circle"></i> Saída (Uso / Consumo)</button>
+      <button onclick="switchTab('modEntry', this)"><i data-lucide="plus-circle"></i> Receber do Almoxarifado</button>
+      <button onclick="switchTab('modCad', this)"><i data-lucide="list"></i> Cadastrar / Editar Materiais</button>
+      <button onclick="switchTab('modHistory', this)"><i data-lucide="history"></i> Histórico</button>
+    `;
+  } else {
+    document.body.className = 'theme-ferramenta';
+    title.innerHTML = '<i data-lucide="wrench"></i> MÓDULO: FERRAMENTAS E EQUIPAMENTOS';
+    nav.innerHTML = `
+      <button class="active" onclick="switchTab('modDashboard', this)"><i data-lucide="layout-dashboard"></i> Status das Ferramentas</button>
+      <button onclick="switchTab('modLoans', this)"><i data-lucide="handshake"></i> Empréstimos & Devoluções</button>
+      <button onclick="switchTab('modCad', this)"><i data-lucide="list"></i> Cadastrar / Editar Ferramentas</button>
+      <button onclick="switchTab('modHistory', this)"><i data-lucide="history"></i> Histórico</button>
+    `;
+  }
+
+  setupModuleFields();
+  switchTab('modDashboard');
+  renderModule();
+}
+
+function setupModuleFields() {
+  const cadFields = document.getElementById('cadFormFields');
+  if (currentModule === 'MATERIAL') {
+    cadFields.innerHTML = `
+      <div class="field"><label>Nome do Material</label><input id="mName" placeholder="Ex.: Cabo Flexível 2.5mm² Azul"></div>
+      <div class="field"><label>Categoria</label><input id="mCategory" placeholder="Ex.: Iluminação, Cabos"></div>
+      <div class="field"><label>Unidade de Medida</label><select id="mUnit"><option>UN</option><option>M</option><option>CX</option><option>RL</option><option>KG</option><option>PAR</option></select></div>
+      <div class="field"><label>Estoque Mínimo Alerta</label><input id="mMin" type="number" min="0" value="1"></div>
+    `;
+  } else {
+    cadFields.innerHTML = `
+      <div class="field"><label>Nome da Ferramenta</label><input id="mName" placeholder="Ex.: Parafusadeira Makita 18V / Martelete Bosch"></div>
+      <div class="field"><label>Categoria</label><input id="mCategory" placeholder="Ex.: Ferramentas Elétricas, Manuais, Medidores"></div>
+      <div class="field"><label>Quantidade Total no Quarto</label><input id="mStockTotal" type="number" min="1" value="1"></div>
+    `;
+  }
+}
+
+function switchTab(tabId, btn) {
+  document.querySelectorAll('#moduleSection .section').forEach(s => s.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+
+  if (btn) {
+    document.querySelectorAll('#moduleNav button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+}
+
+function updateHubStats() {
+  const mats = materials.filter(m => m.type === 'MATERIAL');
+  const tools = materials.filter(m => m.type === 'FERRAMENTA');
+
+  document.getElementById('hubMatTotal').textContent = mats.length;
+  document.getElementById('hubMatLow').textContent = mats.filter(m => m.stock <= m.min).length;
+
+  document.getElementById('hubToolTotal').textContent = tools.length;
+  document.getElementById('hubToolLoans').textContent = activeLoans.length;
+}
+
+function addMaterial() {
+  const name = document.getElementById('mName').value.trim();
+  const category = document.getElementById('mCategory').value.trim() || 'Geral';
+
+  if (!name) { toast('Preencha o nome do item.'); return; }
+  if (materials.some(m => m.name.toLowerCase() === name.toLowerCase())) {
+    toast('Este item já está cadastrado.'); return;
+  }
+
+  if (currentModule === 'MATERIAL') {
+    const unit = document.getElementById('mUnit').value;
+    const min = Number(document.getElementById('mMin').value) || 0;
+    materials.push({ id: uid(), name, type: 'MATERIAL', category, unit, min, stock: 0 });
+  } else {
+    const stockTotal = Number(document.getElementById('mStockTotal').value) || 1;
+    materials.push({ id: uid(), name, type: 'FERRAMENTA', category, unit: 'UN', min: 0, stock: stockTotal });
+  }
+
+  setupModuleFields();
+  save();
+  toast('Item cadastrado com sucesso!');
+}
+
+function openEditModal(id) {
+  const m = materials.find(x => x.id === id);
+  if (!m) return;
+
+  document.getElementById('editId').value = m.id;
+  const fields = document.getElementById('editModalFields');
+
+  if (m.type === 'MATERIAL') {
+    document.getElementById('editModalTitle').innerHTML = '<i data-lucide="edit-3"></i> Editar Material Consumível';
+    fields.innerHTML = `
+      <div class="field"><label>Nome do Material</label><input id="editName" value="${esc(m.name)}"></div>
+      <div class="field"><label>Categoria</label><input id="editCategory" value="${esc(m.category)}"></div>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+        <div class="field"><label>Unidade</label><select id="editUnit"><option ${m.unit==='UN'?'selected':''}>UN</option><option ${m.unit==='M'?'selected':''}>M</option><option ${m.unit==='CX'?'selected':''}>CX</option><option ${m.unit==='RL'?'selected':''}>RL</option><option ${m.unit==='KG'?'selected':''}>KG</option><option ${m.unit==='PAR'?'selected':''}>PAR</option></select></div>
+        <div class="field"><label>Alerta Mínimo</label><input id="editMin" type="number" value="${m.min}"></div>
+      </div>
+      <div class="field"><label>Ajuste do Estoque Atual</label><input id="editStock" type="number" step="0.01" value="${m.stock}"></div>
+    `;
+  } else {
+    document.getElementById('editModalTitle').innerHTML = '<i data-lucide="edit-3"></i> Editar Ferramenta';
+    fields.innerHTML = `
+      <div class="field"><label>Nome da Ferramenta</label><input id="editName" value="${esc(m.name)}"></div>
+      <div class="field"><label>Categoria</label><input id="editCategory" value="${esc(m.category)}"></div>
+      <div class="field"><label>Quantidade Total Existente no Quarto</label><input id="editStock" type="number" min="1" value="${m.stock}"></div>
+    `;
+  }
+
+  document.getElementById('editModal').style.display = 'flex';
+  lucide.createIcons();
+}
+
+function closeEditModal() {
+  document.getElementById('editModal').style.display = 'none';
+}
+
+function saveEditMaterial() {
+  const id = document.getElementById('editId').value;
+  const m = materials.find(x => x.id === id);
+
+  if (!m) return;
+
+  const newName = document.getElementById('editName').value.trim();
+  if (!newName) { toast('Informe um nome válido.'); return; }
+
+  m.name = newName;
+  m.category = document.getElementById('editCategory').value.trim() || 'Geral';
+
+  if (m.type === 'MATERIAL') {
+    m.unit = document.getElementById('editUnit').value;
+    m.min = Number(document.getElementById('editMin').value) || 0;
+    m.stock = Number(document.getElementById('editStock').value) || 0;
+  } else {
+    m.stock = Number(document.getElementById('editStock').value) || 1;
+  }
+
+  save();
+  closeEditModal();
+  toast('Item atualizado com sucesso!');
+}
+
+function getLoanedQty(materialId) {
+  return activeLoans.filter(l => l.materialId === materialId).reduce((acc, l) => acc + Number(l.qty), 0);
+}
+
+function registerEntry() {
+  const id = document.getElementById('inMaterialSelect').value;
+  const q = Number(document.getElementById('inQty').value);
+  if (!id || q <= 0) { toast('Selecione o item e informe a quantidade.'); return; }
+
+  const m = materials.find(x => x.id === id);
+  m.stock += q;
+
+  history.unshift({
+    id: uid(),
+    date: new Date().toISOString(),
+    type: 'ENTRADA',
+    moduleType: currentModule,
+    material: m.name,
+    qty: q + ' ' + (m.unit || 'UN'),
+    person: 'Almoxarifado Central',
+    ref: document.getElementById('inNF').value.trim(),
+    obs: document.getElementById('inObs').value.trim()
+  });
+
+  ['inQty', 'inNF', 'inObs'].forEach(id => document.getElementById(id).value = '');
+  save();
+  toast('Entrada registrada!');
+}
+
+function registerExit() {
+  const person = document.getElementById('outPerson').value.trim();
+  const id = document.getElementById('outMaterialSelect').value;
+  const q = Number(document.getElementById('outQty').value);
+  const loc = document.getElementById('outLocation').value.trim();
+
+  if (!person || !id || q <= 0) { toast('Preencha quem pegou, o material e a quantidade.'); return; }
+  const m = materials.find(x => x.id === id);
+
+  if (q > m.stock) { toast(`Estoque insuficiente! Disponível: ${m.stock} ${m.unit}`); return; }
+
+  m.stock -= q;
+  history.unshift({
+    id: uid(),
+    date: new Date().toISOString(),
+    type: 'SAÍDA',
+    moduleType: currentModule,
+    material: m.name,
+    qty: q + ' ' + m.unit,
+    person,
+    ref: loc,
+    obs: document.getElementById('outObs').value.trim()
+  });
+
+  ['outPerson', 'outQty', 'outLocation', 'outObs'].forEach(id => document.getElementById(id).value = '');
+  save();
+  toast('Saída baixada no estoque!');
+}
+
+function registerLoan() {
+  const person = document.getElementById('loanPerson').value.trim();
+  const id = document.getElementById('loanMaterialSelect').value;
+  const q = Number(document.getElementById('loanQty').value);
+  const loc = document.getElementById('loanLocation').value.trim();
+
+  if (!person || !id || q <= 0) { toast('Preencha o colaborador, a ferramenta e a quantidade.'); return; }
+  const m = materials.find(x => x.id === id);
+
+  const currentlyLoaned = getLoanedQty(m.id);
+  const availableToLoan = m.stock - currentlyLoaned;
+
+  if (q > availableToLoan) {
+    toast(`Apenas ${availableToLoan} ${m.name} disponíveis no quarto!`);
+    return;
+  }
+
+  activeLoans.unshift({
+    id: uid(),
+    materialId: m.id,
+    materialName: m.name,
+    unit: 'UN',
+    qty: q,
+    person,
+    location: loc,
+    date: new Date().toISOString(),
+    obs: document.getElementById('loanObs').value.trim()
+  });
+
+  history.unshift({
+    id: uid(),
+    date: new Date().toISOString(),
+    type: 'EMPRÉSTIMO',
+    moduleType: 'FERRAMENTA',
+    material: m.name,
+    qty: q + ' UN',
+    person,
+    ref: loc,
+    obs: document.getElementById('loanObs').value.trim()
+  });
+
+  ['loanPerson', 'loanQty', 'loanLocation', 'loanObs'].forEach(id => document.getElementById(id).value = '');
+  save();
+  toast('Empréstimo registrado!');
+}
+
+function returnLoan(loanId) {
+  const index = activeLoans.findIndex(l => l.id === loanId);
+  if (index === -1) return;
+
+  const loan = activeLoans[index];
+
+  history.unshift({
+    id: uid(),
+    date: new Date().toISOString(),
+    type: 'DEVOLUÇÃO',
+    moduleType: 'FERRAMENTA',
+    material: loan.materialName,
+    qty: loan.qty + ' UN',
+    person: loan.person,
+    ref: loan.location,
+    obs: 'Ferramenta devolvida ao quarto'
+  });
+
+  fetch(`${API_URL}/active_loans?id=eq.${loanId}`, { method: 'DELETE', headers });
+
+  activeLoans.splice(index, 1);
+  save();
+  toast('Devolução registrada com sucesso!');
+}
+
+function deleteMaterial(id) {
+  const m = materials.find(x => x.id === id);
+  if (!confirm(`Remover "${m.name}" do cadastro?`)) return;
+
+  fetch(`${API_URL}/materials?id=eq.${id}`, { method: 'DELETE', headers });
+
+  materials = materials.filter(x => x.id !== id);
+  save();
+  toast('Item excluído.');
+}
+
+function renderModule() {
+  const filteredMaterials = materials.filter(m => m.type === currentModule);
+  const q = (document.getElementById('modSearch')?.value || '').toLowerCase();
+  const searchArr = filteredMaterials.filter(m => (m.name + ' ' + m.category).toLowerCase().includes(q));
+
+  const dashHeader = document.getElementById('dashTableHeader');
+  const cadHeader = document.getElementById('cadTableHeader');
+
+  if (currentModule === 'MATERIAL') {
+    dashHeader.innerHTML = '<tr><th>Material</th><th>Categoria</th><th>Qtd. Atual</th><th>Alerta Mínimo</th><th>Status</th></tr>';
+    cadHeader.innerHTML = '<tr><th>Material</th><th>Categoria</th><th>Unidade</th><th>Estoque</th><th>Mínimo</th><th>Ações</th></tr>';
+
+    document.getElementById('modTable').innerHTML = searchArr.length ? searchArr.map(m => `
+      <tr>
+        <td><b>${esc(m.name)}</b></td>
+        <td>${esc(m.category)}</td>
+        <td><b style="font-size:15px; color:var(--azul-escuro)">${m.stock} ${m.unit}</b></td>
+        <td>${m.min} ${m.unit}</td>
+        <td><span class="badge ${m.stock <= m.min ? 'low' : 'ok'}">${m.stock <= m.min ? 'PEDIR AO ALMOXARIFADO' : 'DISPONÍVEL'}</span></td>
+      </tr>
+    `).join('') : '<tr><td colspan="5" class="empty">Nenhum material cadastrado.</td></tr>';
+
+    document.getElementById('cadTable').innerHTML = filteredMaterials.length ? filteredMaterials.map(m => `
+      <tr>
+        <td><b>${esc(m.name)}</b></td>
+        <td>${esc(m.category)}</td>
+        <td>${m.unit}</td>
+        <td><b>${m.stock}</b></td>
+        <td>${m.min}</td>
+        <td>
+          <button class="btn secondary small" onclick="openEditModal('${m.id}')"><i data-lucide="edit-3"></i> Editar</button>
+          <button class="btn danger small" onclick="deleteMaterial('${m.id}')"><i data-lucide="trash-2"></i> Excluir</button>
+        </td>
+      </tr>
+    `).join('') : '<tr><td colspan="6" class="empty">Sem materiais cadastrados.</td></tr>';
+
+  } else {
+    dashHeader.innerHTML = '<tr><th>Ferramenta</th><th>Categoria</th><th>Total no Quarto</th><th>Emprestadas</th><th>Disponível Agora</th><th>Status</th></tr>';
+    cadHeader.innerHTML = '<tr><th>Ferramenta</th><th>Categoria</th><th>Total Existente</th><th>Ações</th></tr>';
+
+    document.getElementById('modTable').innerHTML = searchArr.length ? searchArr.map(m => {
+      const loaned = getLoanedQty(m.id);
+      const available = m.stock - loaned;
+      return `
+        <tr>
+          <td><b>${esc(m.name)}</b></td>
+          <td>${esc(m.category)}</td>
+          <td><b>${m.stock} UN</b></td>
+          <td><span style="color:var(--laranja); font-weight:700">${loaned} UN</span></td>
+          <td><b style="font-size:15px; color:var(--success)">${available} UN</b></td>
+          <td><span class="badge ${available > 0 ? 'ok' : 'warn'}">${available > 0 ? 'DISPONÍVEL' : 'TODAS EMPRESTADAS'}</span></td>
+        </tr>
+      `;
+    }).join('') : '<tr><td colspan="6" class="empty">Nenhuma ferramenta cadastrada.</td></tr>';
+
+    document.getElementById('cadTable').innerHTML = filteredMaterials.length ? filteredMaterials.map(m => `
+      <tr>
+        <td><b>${esc(m.name)}</b></td>
+        <td>${esc(m.category)}</td>
+        <td><b>${m.stock} UN</b></td>
+        <td>
+          <button class="btn secondary small" onclick="openEditModal('${m.id}')"><i data-lucide="edit-3"></i> Editar</button>
+          <button class="btn danger small" onclick="deleteMaterial('${m.id}')"><i data-lucide="trash-2"></i> Excluir</button>
+        </td>
+      </tr>
+    `).join('') : '<tr><td colspan="4" class="empty">Sem ferramentas cadastradas.</td></tr>';
+  }
+
+  const options = '<option value="">Selecione...</option>' + filteredMaterials.map(m => {
+    if (currentModule === 'MATERIAL') {
+      return `<option value="${m.id}">${esc(m.name)} — Disp: ${m.stock} ${m.unit}</option>`;
+    } else {
+      const avail = m.stock - getLoanedQty(m.id);
+      return `<option value="${m.id}">${esc(m.name)} — Disp: ${avail} de ${m.stock} UN</option>`;
+    }
+  }).join('');
+
+  if (document.getElementById('inMaterialSelect')) document.getElementById('inMaterialSelect').innerHTML = options;
+  if (document.getElementById('outMaterialSelect')) document.getElementById('outMaterialSelect').innerHTML = options;
+  if (document.getElementById('loanMaterialSelect')) document.getElementById('loanMaterialSelect').innerHTML = options;
+
+  document.getElementById('loansActiveTable').innerHTML = activeLoans.length ? activeLoans.map(l => `
+    <tr>
+      <td>${fmtDate(l.date)}</td>
+      <td><b>${esc(l.person)}</b></td>
+      <td>${esc(l.materialName)}</td>
+      <td><b>${l.qty} UN</b></td>
+      <td>${esc(l.location || '-')}</td>
+      <td><button class="btn success small" onclick="returnLoan('${l.id}')"><i data-lucide="check"></i> Dar Baixa (Devolver)</button></td>
+    </tr>
+  `).join('') : '<tr><td colspan="6" class="empty">Nenhuma ferramenta emprestada no momento. Todas estão no quarto!</td></tr>';
+
+  const modHistory = history.filter(h => h.moduleType === currentModule);
+  document.getElementById('histTable').innerHTML = modHistory.length ? modHistory.map(h => `
+    <tr>
+      <td>${fmtDate(h.date)}</td>
+      <td><span class="badge ${h.type === 'ENTRADA' || h.type === 'DEVOLUÇÃO' ? 'ok' : h.type === 'EMPRÉSTIMO' ? 'warn' : 'low'}">${h.type}</span></td>
+      <td><b>${esc(h.material)}</b></td>
+      <td><b>${h.qty}</b></td>
+      <td>${esc(h.person || '-')}</td>
+      <td>${esc(h.ref || '-')}</td>
+      <td>${esc(h.obs || '-')}</td>
+    </tr>
+  `).join('') : '<tr><td colspan="7" class="empty">Nenhum histórico registrado.</td></tr>';
+
+  lucide.createIcons();
+}
+
+function exportData() {
+  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ materials, history, activeLoans }));
+  const a = document.createElement('a');
+  a.setAttribute("href", dataStr);
+  a.setAttribute("download", `backup_eletrica_${todayISO()}.json`);
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+
+function importData(event) {
+  const fileReader = new FileReader();
+  fileReader.onload = function (e) {
+    try {
+      const parsed = JSON.parse(e.target.result);
+      if (parsed.materials) {
+        materials = parsed.materials || [];
+        history = parsed.history || [];
+        activeLoans = parsed.activeLoans || [];
+        save();
+        openHub();
+        toast('Dados restaurados!');
+      }
+    } catch (err) { toast('Arquivo inválido.'); }
+  };
+  fileReader.readAsText(event.target.files[0]);
+}
+
+function exportCSV() {
+  const modHistory = history.filter(h => h.moduleType === currentModule);
+  if (!modHistory.length) { toast('Sem histórico para exportar.'); return; }
+  let csv = 'Data;Tipo;Item;Quantidade;Colaborador/Origem;Local/Ref;Observacao\n';
+  modHistory.forEach(h => {
+    csv += `"${fmtDate(h.date)}";"${h.type}";"${h.material}";"${h.qty}";"${h.person}";"${h.ref}";"${h.obs}"\n`;
+  });
+  const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `relatorio_${currentModule.toLowerCase()}_${todayISO()}.csv`;
+  a.click();
+}
+
+// Inicialização Estável e Sincronizada
+checkAuth();
+openHub();
+syncWithCloud();
+</script>
+</body>
+</html>
