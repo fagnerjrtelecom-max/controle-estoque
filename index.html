@@ -16,6 +16,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lucide@latest"></script>
 
+<!-- Bibliotecas para Assinatura Touch e Gerador de PDF -->
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 <style>
 :root {
   --azul-escuro: #000ADC;
@@ -169,7 +173,7 @@ header { background: var(--theme-color); color: white; padding: 14px 28px; displ
 .btn-back { background: var(--bg-app); color: var(--theme-color); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 8px 16px; font-weight: 700; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
 .btn-back:hover { background: var(--theme-color); color: white; }
 
-nav.desktop-tabs { display: flex; gap: 6px; margin-bottom: 20px; background: var(--surface); padding: 6px; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow-desktop); }
+nav.desktop-tabs { display: flex; gap: 6px; margin-bottom: 20px; background: var(--surface); padding: 6px; border-radius: var(--radius-md); border: 1px solid var(--border); box-shadow: var(--shadow-desktop); }
 nav.desktop-tabs button { border: 0; background: transparent; color: var(--text-muted); padding: 10px 18px; border-radius: var(--radius-md); cursor: pointer; font-weight: 700; font-size: 13px; display: flex; align-items: center; gap: 8px; }
 nav.desktop-tabs button:hover { color: var(--theme-color); background: rgba(0, 0, 0, 0.04); }
 nav.desktop-tabs button.active { background: var(--theme-color); color: white; }
@@ -218,6 +222,11 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
 .modal-header h3 { margin: 0; font-size: 18px; color: var(--theme-color); font-weight: 800; }
 
 .toast { position: fixed; right: 24px; bottom: 24px; background: #0f172a; color: white; padding: 14px 22px; border-radius: var(--radius-md); display: none; z-index: 9999; font-size: 14px; font-weight: 600; box-shadow: 0 10px 25px rgba(0,0,0,0.2); border-left: 4px solid var(--theme-color); }
+
+/* ESTILO DO PAD DE ASSINATURA TOUCH */
+.signature-box { border: 2px dashed #0029ff; border-radius: 12px; background: #f8fafc; margin: 15px 0; text-align: center; position: relative; }
+.signature-box canvas { width: 100%; height: 180px; border-radius: 10px; touch-action: none; cursor: crosshair; }
+.signature-tools { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: #eef4fb; border-radius: 0 0 10px 10px; border-top: 1px solid #dbe3ee; }
 </style>
 </head>
 <body class="theme-hub">
@@ -371,7 +380,7 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
           <textarea id="loanObs" placeholder="Ex.: Retirou com maleta e acessórios completos"></textarea>
         </div>
         <div class="actions">
-          <button class="btn primary" onclick="registerLoan()"><i data-lucide="check"></i> Confirmar Empréstimo</button>
+          <button class="btn primary" onclick="openSignatureModal()"><i data-lucide="pen-tool"></i> Assinar & Confirmar Empréstimo</button>
         </div>
       </div>
 
@@ -386,6 +395,7 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
                 <th>Ferramenta</th>
                 <th>Qtd.</th>
                 <th>Local / Serviço</th>
+                <th>Termo (PDF)</th>
                 <th>Ação de Baixa</th>
               </tr>
             </thead>
@@ -493,6 +503,7 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
                 <th>Qtd.</th>
                 <th>Colaborador / Origem</th>
                 <th>Local / Ref</th>
+                <th>Termo (PDF)</th>
                 <th>Obs</th>
               </tr>
             </thead>
@@ -516,6 +527,31 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
     <div class="form-grid" id="editModalFields" style="grid-template-columns: 1fr;"></div>
     <div class="actions" style="margin-top:20px; justify-content: flex-end;">
       <button class="btn primary" onclick="saveEditMaterial()"><i data-lucide="save"></i> Salvar Alterações</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DE ASSINATURA TOUCH PAD -->
+<div class="modal-overlay" id="sigModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3><i data-lucide="pen-tool"></i> Assinatura do Colaborador</h3>
+      <button class="btn secondary small" onclick="closeSignatureModal()">✕ Cancelar</button>
+    </div>
+    <p style="font-size:13px; color:var(--text-muted); margin-top:-10px">
+      Solicite ao colaborador que assine com o dedo ou caneta touch no quadro abaixo:
+    </p>
+
+    <div class="signature-box">
+      <canvas id="signatureCanvas"></canvas>
+      <div class="signature-tools">
+        <span style="font-size:11px; font-weight:bold; color:var(--azul-escuro)">Assine dentro do quadro</span>
+        <button class="btn secondary small" onclick="clearSignature()"><i data-lucide="rotate-ccw"></i> Limpar Assinatura</button>
+      </div>
+    </div>
+
+    <div class="actions" style="margin-top:20px; justify-content: flex-end;">
+      <button class="btn primary" onclick="confirmSignatureAndLoan()"><i data-lucide="file-check"></i> Finalizar & Gerar Termo PDF</button>
     </div>
   </div>
 </div>
@@ -546,6 +582,8 @@ let materials = [];
 let history = [];
 let activeLoans = [];
 let currentModule = null;
+
+let signaturePad = null;
 
 // ESCUTA EM TEMPO REAL NO FIREBASE
 dbFirestore.collection('almoxarifado').doc('dados_eletrica').onSnapshot((doc) => {
@@ -790,6 +828,198 @@ function getLoanedQty(materialId) {
   return activeLoans.filter(l => l.materialId === materialId).reduce((acc, l) => acc + Number(l.qty), 0);
 }
 
+/* FUNÇÕES DE ASSINATURA TOUCH PAD */
+function openSignatureModal() {
+  const person = document.getElementById('loanPerson').value.trim();
+  const id = document.getElementById('loanMaterialSelect').value;
+  const q = Number(document.getElementById('loanQty').value);
+
+  if (!person || !id || q <= 0) {
+    toast('Preencha o colaborador, a ferramenta e a quantidade.');
+    return;
+  }
+
+  const m = materials.find(x => x.id === id);
+  const currentlyLoaned = getLoanedQty(m.id);
+  const availableToLoan = m.stock - currentlyLoaned;
+
+  if (q > availableToLoan) {
+    toast(`Apenas ${availableToLoan} ${m.name} disponíveis no quarto!`);
+    return;
+  }
+
+  document.getElementById('sigModal').style.display = 'flex';
+  const canvas = document.getElementById('signatureCanvas');
+
+  // Ajustar tamanho do canvas
+  canvas.width = canvas.parentElement.clientWidth;
+  canvas.height = 180;
+
+  if (!signaturePad) {
+    signaturePad = new SignaturePad(canvas, {
+      backgroundColor: 'rgb(248, 250, 252)',
+      penColor: 'rgb(0, 41, 255)'
+    });
+  } else {
+    signaturePad.clear();
+  }
+}
+
+function closeSignatureModal() {
+  document.getElementById('sigModal').style.display = 'none';
+}
+
+function clearSignature() {
+  if (signaturePad) signaturePad.clear();
+}
+
+function confirmSignatureAndLoan() {
+  if (signaturePad.isEmpty()) {
+    toast('Solicite ao colaborador que assine no quadro.');
+    return;
+  }
+
+  const signatureImgData = signaturePad.toDataURL('image/png');
+  registerLoan(signatureImgData);
+  closeSignatureModal();
+}
+
+function registerLoan(signatureBase64) {
+  const person = document.getElementById('loanPerson').value.trim();
+  const id = document.getElementById('loanMaterialSelect').value;
+  const q = Number(document.getElementById('loanQty').value);
+  const loc = document.getElementById('loanLocation').value.trim();
+  const m = materials.find(x => x.id === id);
+
+  const newLoanId = uid();
+  const currentDate = new Date().toISOString();
+
+  activeLoans.unshift({
+    id: newLoanId,
+    materialId: m.id,
+    materialName: m.name,
+    unit: 'UN',
+    qty: q,
+    person,
+    location: loc,
+    date: currentDate,
+    obs: document.getElementById('loanObs').value.trim(),
+    signature: signatureBase64
+  });
+
+  history.unshift({
+    id: uid(),
+    date: currentDate,
+    type: 'EMPRÉSTIMO',
+    moduleType: 'FERRAMENTA',
+    material: m.name,
+    qty: q + ' UN',
+    person,
+    ref: loc,
+    obs: document.getElementById('loanObs').value.trim(),
+    signature: signatureBase64
+  });
+
+  // Gerar e Baixar Termo em PDF Automaticamente
+  generatePDFTerm(person, m.name, q, loc, currentDate, signatureBase64);
+
+  ['loanPerson', 'loanQty', 'loanLocation', 'loanObs'].forEach(id => document.getElementById(id).value = '');
+  save();
+  toast('Empréstimo registrado e Termo em PDF gerado!');
+}
+
+/* GERADOR DE TERMO EM PDF (JSPDF) */
+function generatePDFTerm(person, materialName, qty, location, dateIso, signatureImg) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  // Cabeçalho da Empresa
+  doc.setFillColor(0, 41, 255); // Azul JR
+  doc.rect(0, 0, 210, 30, 'F');
+
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(18);
+  doc.setFont('helvetica', 'bold');
+  doc.text('JR TELECOM - TERMO DE RESPONSABILIDADE', 105, 18, { align: 'center' });
+
+  // Corpo do Texto
+  doc.setTextColor(30, 41, 59);
+  doc.setFontSize(11);
+  doc.setFont('helvetica', 'normal');
+
+  doc.text(`Data do Registro: ${fmtDate(dateIso)}`, 15, 42);
+
+  const bodyText = `Declaramos que o colaborador abaixo especificado recebeu em perfeito estado de conservação e funcionamento os equipamentos e/ou ferramentas descritos neste termo, comprometendo-se a utilizá-los exclusivamente em serviço e devolvê-los nas mesmas condições.`;
+  doc.text(doc.splitTextToSize(bodyText, 180), 15, 52);
+
+  // Quadro com Detalhes do Empréstimo
+  doc.setDrawColor(200, 210, 225);
+  doc.setFillColor(248, 250, 252);
+  doc.roundedRect(15, 75, 180, 55, 3, 3, 'FD');
+
+  doc.setFont('helvetica', 'bold');
+  doc.text('COLABORADOR:', 20, 87);
+  doc.text('FERRAMENTA / EQUIPAMENTO:', 20, 97);
+  doc.text('QUANTIDADE RETIRADA:', 20, 107);
+  doc.text('LOCAL / SERVIÇO DA OBRA:', 20, 117);
+
+  doc.setFont('helvetica', 'normal');
+  doc.text(String(person), 75, 87);
+  doc.text(String(materialName), 85, 97);
+  doc.text(`${qty} UN`, 75, 107);
+  doc.text(String(location || 'Não informado'), 80, 117);
+
+  // Área de Assinatura
+  doc.setFont('helvetica', 'bold');
+  doc.text('ASSINATURA DIGITAL DO COLABORADOR:', 105, 150, { align: 'center' });
+
+  if (signatureImg) {
+    doc.addImage(signatureImg, 'PNG', 65, 155, 80, 35);
+  }
+
+  doc.line(45, 195, 165, 195);
+  doc.setFontSize(10);
+  doc.text(String(person), 105, 201, { align: 'center' });
+  doc.setFontSize(8);
+  doc.setTextColor(100, 116, 139);
+  doc.text('Documento assinado digitalmente no tablet corporativo da JR Telecom.', 105, 207, { align: 'center' });
+
+  // Download do PDF
+  doc.save(`Termo_${person.replace(/\s+/g, '_')}_${todayISO()}.pdf`);
+}
+
+function printTermFromHistory(histId) {
+  const item = history.find(h => h.id === histId);
+  if (!item || !item.signature) {
+    toast('Este registro não possui assinatura armazenada.');
+    return;
+  }
+  generatePDFTerm(item.person, item.material, item.qty, item.ref, item.date, item.signature);
+}
+
+function returnLoan(loanId) {
+  const index = activeLoans.findIndex(l => l.id === loanId);
+  if (index === -1) return;
+
+  const loan = activeLoans[index];
+
+  history.unshift({
+    id: uid(),
+    date: new Date().toISOString(),
+    type: 'DEVOLUÇÃO',
+    moduleType: 'FERRAMENTA',
+    material: loan.materialName,
+    qty: loan.qty + ' UN',
+    person: loan.person,
+    ref: loan.location,
+    obs: 'Ferramenta devolvida ao quarto'
+  });
+
+  activeLoans.splice(index, 1);
+  save();
+  toast('Devolução registrada com sucesso!');
+}
+
 function registerEntry() {
   const id = document.getElementById('inMaterialSelect').value;
   const q = Number(document.getElementById('inQty').value);
@@ -842,75 +1072,6 @@ function registerExit() {
   ['outPerson', 'outQty', 'outLocation', 'outObs'].forEach(id => document.getElementById(id).value = '');
   save();
   toast('Saída baixada no estoque!');
-}
-
-function registerLoan() {
-  const person = document.getElementById('loanPerson').value.trim();
-  const id = document.getElementById('loanMaterialSelect').value;
-  const q = Number(document.getElementById('loanQty').value);
-  const loc = document.getElementById('loanLocation').value.trim();
-
-  if (!person || !id || q <= 0) { toast('Preencha o colaborador, a ferramenta e a quantidade.'); return; }
-  const m = materials.find(x => x.id === id);
-
-  const currentlyLoaned = getLoanedQty(m.id);
-  const availableToLoan = m.stock - currentlyLoaned;
-
-  if (q > availableToLoan) {
-    toast(`Apenas ${availableToLoan} ${m.name} disponíveis no quarto!`);
-    return;
-  }
-
-  activeLoans.unshift({
-    id: uid(),
-    materialId: m.id,
-    materialName: m.name,
-    unit: 'UN',
-    qty: q,
-    person,
-    location: loc,
-    date: new Date().toISOString(),
-    obs: document.getElementById('loanObs').value.trim()
-  });
-
-  history.unshift({
-    id: uid(),
-    date: new Date().toISOString(),
-    type: 'EMPRÉSTIMO',
-    moduleType: 'FERRAMENTA',
-    material: m.name,
-    qty: q + ' UN',
-    person,
-    ref: loc,
-    obs: document.getElementById('loanObs').value.trim()
-  });
-
-  ['loanPerson', 'loanQty', 'loanLocation', 'loanObs'].forEach(id => document.getElementById(id).value = '');
-  save();
-  toast('Empréstimo registrado!');
-}
-
-function returnLoan(loanId) {
-  const index = activeLoans.findIndex(l => l.id === loanId);
-  if (index === -1) return;
-
-  const loan = activeLoans[index];
-
-  history.unshift({
-    id: uid(),
-    date: new Date().toISOString(),
-    type: 'DEVOLUÇÃO',
-    moduleType: 'FERRAMENTA',
-    material: loan.materialName,
-    qty: loan.qty + ' UN',
-    person: loan.person,
-    ref: loan.location,
-    obs: 'Ferramenta devolvida ao quarto'
-  });
-
-  activeLoans.splice(index, 1);
-  save();
-  toast('Devolução registrada com sucesso!');
 }
 
 function deleteMaterial(id) {
@@ -1010,9 +1171,12 @@ function renderModule() {
       <td>${esc(l.materialName)}</td>
       <td><b>${l.qty} UN</b></td>
       <td>${esc(l.location || '-')}</td>
-      <td><button class="btn success small" onclick="returnLoan('${l.id}')"><i data-lucide="check"></i> Dar Baixa (Devolver)</button></td>
+      <td>
+        ${l.signature ? `<button class="btn secondary small" onclick="generatePDFTerm('${esc(l.person)}', '${esc(l.materialName)}', ${l.qty}, '${esc(l.location)}', '${l.date}', '${l.signature}')"><i data-lucide="file-text"></i> PDF</button>` : '-'}
+      </td>
+      <td><button class="btn success small" onclick="returnLoan('${l.id}')"><i data-lucide="check"></i> Dar Baixa</button></td>
     </tr>
-  `).join('') : '<tr><td colspan="6" class="empty">Nenhuma ferramenta emprestada no momento. Todas estão no quarto!</td></tr>';
+  `).join('') : '<tr><td colspan="7" class="empty">Nenhuma ferramenta emprestada no momento. Todas estão no quarto!</td></tr>';
 
   const modHistory = history.filter(h => h.moduleType === currentModule);
   document.getElementById('histTable').innerHTML = modHistory.length ? modHistory.map(h => `
@@ -1023,9 +1187,12 @@ function renderModule() {
       <td><b>${h.qty}</b></td>
       <td>${esc(h.person || '-')}</td>
       <td>${esc(h.ref || '-')}</td>
+      <td>
+        ${h.signature ? `<button class="btn secondary small" onclick="printTermFromHistory('${h.id}')"><i data-lucide="file-text"></i> Termo PDF</button>` : '-'}
+      </td>
       <td>${esc(h.obs || '-')}</td>
     </tr>
-  `).join('') : '<tr><td colspan="7" class="empty">Nenhum histórico registrado.</td></tr>';
+  `).join('') : '<tr><td colspan="8" class="empty">Nenhum histórico registrado.</td></tr>';
 
   lucide.createIcons();
 }
