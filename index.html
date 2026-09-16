@@ -1066,20 +1066,26 @@ function generatePDFTerm(person, materialName, qty, location, dateIso, signature
     doc.setTextColor(100, 116, 139);
     doc.text('Assinatura Digital do Colaborador Responsável', 105, sigBoxY + 47, { align: 'center' });
 
-    // Abertura / Download
+    // Abertura e Download Otimizado para Tablets/Android e PC
     try {
-      const pdfDataUri = doc.output('datauristring');
-      const newTab = window.open();
-      if (newTab) {
-        newTab.document.write(`<iframe width='100%' height='100%' src='${pdfDataUri}'></iframe>`);
-      } else {
-        doc.save(`Termo_${person.replace(/\s+/g, '_')}_${todayISO()}.pdf`);
-      }
+      const pdfBlob = doc.output('blob');
+      const blobUrl = URL.createObjectURL(pdfBlob);
+      
+      // Cria um link temporário para acionar o download/visualização direta
+      const downloadLink = document.createElement('a');
+      downloadLink.href = blobUrl;
+      downloadLink.download = `Termo_${person.replace(/\s+/g, '_')}_${todayISO()}.pdf`;
+      document.body.appendChild(downloadLink);
+      
+      // No Android/Tablet ele faz o download do arquivo diretamente para a pasta de downloads
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+
+      // Tenta abrir a visualização em nova aba caso o navegador permita
+      window.open(blobUrl, '_blank');
     } catch (err) {
       doc.save(`Termo_${person.replace(/\s+/g, '_')}_${todayISO()}.pdf`);
     }
-  }
-}
 
 function printTermFromHistory(histId) {
   const item = history.find(h => h.id === histId);
