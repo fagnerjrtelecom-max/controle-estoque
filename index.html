@@ -575,6 +575,7 @@ let currentModule = null;
 let signaturePad = null;
 
 // ESCUTA EM TEMPO REAL NO FIREBASE
+let _avisoDocInexistenteMostrado = false;
 dbFirestore.collection('almoxarifado').doc('dados_eletrica').onSnapshot((doc) => {
   if (doc.exists) {
     const data = doc.data() || {};
@@ -582,7 +583,15 @@ dbFirestore.collection('almoxarifado').doc('dados_eletrica').onSnapshot((doc) =>
     history = data.history || [];
     activeLoans = data.activeLoans || [];
   } else {
-    save();
+    // IMPORTANTE: não gravamos mais dados vazios automaticamente aqui.
+    // Antes, se o documento não existisse (por ex. apagado sem querer),
+    // o sistema recriava ele vazio sozinho, apagando qualquer chance de
+    // recuperação. Agora apenas avisamos, sem sobrescrever nada.
+    console.warn('ATENÇÃO: documento almoxarifado/dados_eletrica não encontrado no Firestore. Nenhuma gravação automática foi feita.');
+    if (!_avisoDocInexistenteMostrado && localStorage.getItem(KEY_AUTH) === 'true') {
+      _avisoDocInexistenteMostrado = true;
+      alert('ATENÇÃO: não foi encontrado nenhum dado salvo no banco de dados (documento almoxarifado/dados_eletrica inexistente).\n\nO sistema NÃO vai criar/sobrescrever nada sozinho, para não arriscar apagar informação por engano.\n\nAvise o responsável técnico antes de continuar usando o sistema.');
+    }
   }
   updateHubStats();
   if (currentModule) renderModule();
