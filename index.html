@@ -568,10 +568,50 @@ const dbFirestore = firebase.firestore();
 
 // LOGIN REAL COM FIREBASE AUTHENTICATION (substitui a senha fixa antiga)
 let usuarioLogado = false;
+let _unsubscribeSnapshot = null;
+let _avisoDocInexistenteMostrado = false;
+
+function iniciarSincronizacao(){
+  if (_unsubscribeSnapshot) return; // já está ouvindo, evita duplicar
+  _unsubscribeSnapshot = dbFirestore.collection('almoxarifado').doc('dados_eletrica').onSnapshot((doc) => {
+    if (doc.exists) {
+      const data = doc.data() || {};
+      materials = data.materials || [];
+      history = data.history || [];
+      activeLoans = data.activeLoans || [];
+    } else {
+      // IMPORTANTE: não gravamos mais dados vazios automaticamente aqui.
+      // Antes, se o documento não existisse (por ex. apagado sem querer),
+      // o sistema recriava ele vazio sozinho, apagando qualquer chance de
+      // recuperação. Agora apenas avisamos, sem sobrescrever nada.
+      console.warn('ATENÇÃO: documento almoxarifado/dados_eletrica não encontrado no Firestore. Nenhuma gravação automática foi feita.');
+      if (!_avisoDocInexistenteMostrado && usuarioLogado) {
+        _avisoDocInexistenteMostrado = true;
+        alert('ATENÇÃO: não foi encontrado nenhum dado salvo no banco de dados (documento almoxarifado/dados_eletrica inexistente).\n\nO sistema NÃO vai criar/sobrescrever nada sozinho, para não arriscar apagar informação por engano.\n\nAvise o responsável técnico antes de continuar usando o sistema.');
+      }
+    }
+    updateHubStats();
+    if (currentModule) renderModule();
+  }, (error) => {
+    console.error("Erro na sincronização Firebase:", error);
+  });
+}
+
+function pararSincronizacao(){
+  if (_unsubscribeSnapshot) {
+    _unsubscribeSnapshot();
+    _unsubscribeSnapshot = null;
+  }
+}
 
 firebase.auth().onAuthStateChanged((user) => {
   usuarioLogado = !!user;
   checkAuth();
+  if (user) {
+    iniciarSincronizacao(); // só começa a ler o banco DEPOIS do login confirmado
+  } else {
+    pararSincronizacao();
+  }
 });
 
 let materials = [];
@@ -580,31 +620,6 @@ let activeLoans = [];
 let currentModule = null;
 
 let signaturePad = null;
-
-// ESCUTA EM TEMPO REAL NO FIREBASE
-let _avisoDocInexistenteMostrado = false;
-dbFirestore.collection('almoxarifado').doc('dados_eletrica').onSnapshot((doc) => {
-  if (doc.exists) {
-    const data = doc.data() || {};
-    materials = data.materials || [];
-    history = data.history || [];
-    activeLoans = data.activeLoans || [];
-  } else {
-    // IMPORTANTE: não gravamos mais dados vazios automaticamente aqui.
-    // Antes, se o documento não existisse (por ex. apagado sem querer),
-    // o sistema recriava ele vazio sozinho, apagando qualquer chance de
-    // recuperação. Agora apenas avisamos, sem sobrescrever nada.
-    console.warn('ATENÇÃO: documento almoxarifado/dados_eletrica não encontrado no Firestore. Nenhuma gravação automática foi feita.');
-    if (!_avisoDocInexistenteMostrado && usuarioLogado) {
-      _avisoDocInexistenteMostrado = true;
-      alert('ATENÇÃO: não foi encontrado nenhum dado salvo no banco de dados (documento almoxarifado/dados_eletrica inexistente).\n\nO sistema NÃO vai criar/sobrescrever nada sozinho, para não arriscar apagar informação por engano.\n\nAvise o responsável técnico antes de continuar usando o sistema.');
-    }
-  }
-  updateHubStats();
-  if (currentModule) renderModule();
-}, (error) => {
-  console.error("Erro na sincronização Firebase:", error);
-});
 
 function save() {
   dbFirestore.collection('almoxarifado').doc('dados_eletrica').set({
