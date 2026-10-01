@@ -252,14 +252,14 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
       </div>
       <div class="login-form">
         <div class="field">
-          <label>Usuário</label>
-          <input type="text" id="loginUser" placeholder="Digite seu usuário" onkeydown="checkEnter(event)">
+          <label>E-mail</label>
+          <input type="email" id="loginUser" placeholder="Digite seu e-mail" autocomplete="username" onkeydown="checkEnter(event)">
         </div>
         <div class="field">
           <label>Senha</label>
-          <input type="password" id="loginPass" placeholder="Digite sua senha" onkeydown="checkEnter(event)">
+          <input type="password" id="loginPass" placeholder="Digite sua senha" autocomplete="current-password" onkeydown="checkEnter(event)">
         </div>
-        <button class="btn-login" onclick="handleLogin()">
+        <button class="btn-login" onclick="handleLogin()" id="btnLogin">
           <i data-lucide="log-in" size="18"></i> Entrar no Sistema
         </button>
       </div>
@@ -549,6 +549,7 @@ tr:hover { background: rgba(0, 0, 0, 0.02); }
 <div class="toast" id="toast"></div>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
 <script>
@@ -565,7 +566,13 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const dbFirestore = firebase.firestore();
 
-const KEY_AUTH = 'eletrica_auth_v10';
+// LOGIN REAL COM FIREBASE AUTHENTICATION (substitui a senha fixa antiga)
+let usuarioLogado = false;
+
+firebase.auth().onAuthStateChanged((user) => {
+  usuarioLogado = !!user;
+  checkAuth();
+});
 
 let materials = [];
 let history = [];
@@ -588,7 +595,7 @@ dbFirestore.collection('almoxarifado').doc('dados_eletrica').onSnapshot((doc) =>
     // o sistema recriava ele vazio sozinho, apagando qualquer chance de
     // recuperação. Agora apenas avisamos, sem sobrescrever nada.
     console.warn('ATENÇÃO: documento almoxarifado/dados_eletrica não encontrado no Firestore. Nenhuma gravação automática foi feita.');
-    if (!_avisoDocInexistenteMostrado && localStorage.getItem(KEY_AUTH) === 'true') {
+    if (!_avisoDocInexistenteMostrado && usuarioLogado) {
       _avisoDocInexistenteMostrado = true;
       alert('ATENÇÃO: não foi encontrado nenhum dado salvo no banco de dados (documento almoxarifado/dados_eletrica inexistente).\n\nO sistema NÃO vai criar/sobrescrever nada sozinho, para não arriscar apagar informação por engano.\n\nAvise o responsável técnico antes de continuar usando o sistema.');
     }
@@ -608,32 +615,41 @@ function save() {
 }
 
 function checkAuth() {
-  const isAuth = localStorage.getItem(KEY_AUTH);
-  if (isAuth === 'true') {
+  if (usuarioLogado) {
     document.getElementById('loginScreen').style.display = 'none';
   } else {
-    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('loginScreen').style.display = '';
   }
 }
 
 function handleLogin() {
-  const user = document.getElementById('loginUser').value.trim();
-  const pass = document.getElementById('loginPass').value.trim();
+  const email = document.getElementById('loginUser').value.trim();
+  const pass = document.getElementById('loginPass').value;
 
-  if (user.toLowerCase() === 'fagner' && pass === 'jr123') {
-    localStorage.setItem(KEY_AUTH, 'true');
-    document.getElementById('loginScreen').style.display = 'none';
-    toast('Bem-vindo, Fagner!');
-  } else {
-    toast('Usuário ou senha incorretos!');
+  if (!email || !pass) {
+    toast('Preencha e-mail e senha.');
+    return;
   }
+
+  const btn = document.getElementById('btnLogin');
+  btn.disabled = true;
+  firebase.auth().signInWithEmailAndPassword(email, pass)
+    .then(() => {
+      toast('Bem-vindo!');
+    })
+    .catch(() => {
+      toast('E-mail ou senha incorretos!');
+      document.getElementById('loginPass').value = '';
+    })
+    .finally(() => {
+      btn.disabled = false;
+    });
 }
 
 function handleLogout() {
-  localStorage.removeItem(KEY_AUTH);
+  firebase.auth().signOut();
   document.getElementById('loginUser').value = '';
   document.getElementById('loginPass').value = '';
-  checkAuth();
 }
 
 function checkEnter(e) {
