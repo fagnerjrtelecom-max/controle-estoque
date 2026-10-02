@@ -605,14 +605,14 @@ function pararSincronizacao(){
 }
 
 // Logout automático por inatividade (15 minutos sem nenhuma interação)
-const TEMPO_INATIVIDADE_MS = 15 * 60 * 1000;
+const TEMPO_INATIVIDADE_MS = 5 * 60 * 1000;
 let _timerInatividade = null;
 
 function resetarTimerInatividade(){
   if (!usuarioLogado) return;
   clearTimeout(_timerInatividade);
   _timerInatividade = setTimeout(() => {
-    toast('Sessão encerrada por inatividade (15 minutos sem uso).');
+    toast('Sessão encerrada por inatividade (5 minutos sem uso).');
     handleLogout();
   }, TEMPO_INATIVIDADE_MS);
 }
